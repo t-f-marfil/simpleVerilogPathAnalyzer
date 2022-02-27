@@ -68,9 +68,17 @@ class PortTypeErr(Exception):
     pass
 
 
+class PortInout(Enum):
+    IN = auto()
+    OUT = auto()
+
+
+portInoutTable = dict(zip(PortInout, ["input", "output"]))
+portInoutInvTable = dict(zip(["input", "output"], PortInout))
+
 class PortType:
-    def __init__(self, ptype, wiretype="wire") -> None:
-        self.ptype = ptype 
+    def __init__(self, inout:PortInout, wiretype="wire") -> None:
+        self.inout = inout 
         self.wiretype = wiretype
 
         # below is supposed to be detected while parsing
@@ -80,7 +88,7 @@ class PortType:
 
 
     def __str__(self) -> str:
-        return self.ptype
+        return portInoutTable[self.inout]
 
 
 class OnePort:
@@ -122,6 +130,22 @@ class Port:
             txtcore += "\nNone"
 
         return txt + indent(txtcore)
+
+    def getInports(self):
+        lst = []
+        for i in self.ports.values():
+            if i.ptype.inout == PortInout.IN:
+                lst += [i]
+        return lst
+
+    # def inoutClassify(self):
+    #     inport, outport = [], []
+    #     for p in self.ports:
+    #         if p.ptype.inout == PortInout.IN:
+    #             inport += [p]
+    #         else:
+    #             outport += [p]
+    #     self.inport, self.outport = inport, outport
 
     def find(self, key):
         return self.ports.get(key, None)
@@ -588,4 +612,9 @@ class Module:
             ret = dos 
 
         return ret
+
+    def getNetDependency(self):
+        obj = self.content.getNetDependency()
+        obj.addPortInfo(self.port)
+        return obj
         

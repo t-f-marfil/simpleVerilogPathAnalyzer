@@ -84,10 +84,103 @@ class ModuleContentDependency:
     def __init__(self, assigndep:list, alwaysdep:list) -> None:
         self.assigndep = assigndep
         self.alwaysdep = alwaysdep
+
+        # not effective at all from the perspective of security,
+        # but should be effective in preventing mistakes
+        self.decodeCalled = False
+        self.callingDecode = False
+
+        self.port = None
+
+        self.decodeDependency()
+        self.upperRegData = {}
         
     def extractAssign(self):
-        lst = self.assigndep
+        if not self.callingDecode:
+            raise Exception("extractAssign in ModuleContentDependency is called unexpectedly.")
+        lst = []
+        lst += self.assigndep
         for j in [i.extractAssign() for i in self.alwaysdep]:
             lst += j 
 
         return lst
+
+    def decodeDependency(self):
+        """Causes irreversible effect on data.
+        """
+        if not self.decodeCalled:
+            self.decodeCalled = True
+            self.callingDecode = True
+            
+            directDependency = {}
+            trueReg = set()
+
+            deplist = self.extractAssign()
+
+            for item in deplist:
+                lhs, rhs, assigntype = item.lhsId, item.rhsId, item.ttype
+                
+                for tag in lhs:
+                    if assigntype == AssignType.NONBLOCK:
+                        trueReg.add(tag)
+
+                    if tag in directDependency:
+                        directDependency[tag] += rhs 
+                        directDependency[tag] = list(set(directDependency[tag]))
+                    else:
+                        directDependency[tag] = rhs
+
+            for key in directDependency.keys():
+                directDependency[key] = tuple(set(directDependency[key]))
+            
+            self.directDependency = directDependency
+            self.trueReg = trueReg 
+
+            self.callingDecode = False
+
+        else:
+            raise Exception("decodeDependency is not supposed to be called twice.")
+
+    def addPortInfo(self, port):
+        # port of Port (in svast.py)
+        self.port = port
+        self.inports = port.getInports()
+        self.inportNames = set([i.name for i in self.inports])
+
+        self.findUpperRegisterAll()
+
+    def findUpperRegister(self, tag):
+        if self.port is None:
+            raise Exception("self.port is not given.")
+
+        val = self.upperRegData.get(tag, None)
+        if val is None:
+            lst = []
+            try:
+                for parent in self.directDependency[tag]:
+                    if (parent in self.trueReg) or (parent in self.inportNames):
+                        lst += [parent]
+                    else:
+                        lst += self.findUpperRegister(parent)
+
+                    dummylist = [1]
+                    if len(self.directDependency.get(parent, dummylist)) == 0:
+                        # assigned Constant value
+                        lst += [parent]
+            except KeyError as e:
+                key = str(e).replace("'", "")
+                
+                if key in self.inportNames:
+                    print(f"{key} is an input port.")                
+
+            lst = list(set(lst))
+            self.upperRegData[tag] = lst 
+            return lst 
+        else:
+            # print("cached.")
+            return val
+
+    def findUpperRegisterAll(self):
+        for tag in self.directDependency:
+            self.findUpperRegister(tag)
+

@@ -139,9 +139,9 @@ def p_inouttype(p):
               | OUTPUT wiretype
     """
     if len(p) == 2:
-        p[0] = PortType(p[1])
+        p[0] = PortType(portInoutInvTable[p[1]])
     else:
-        p[0] = PortType(p[1], p[2])
+        p[0] = PortType(portInoutInvTable[p[1]], p[2])
 
     return
 

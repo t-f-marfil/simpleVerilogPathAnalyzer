@@ -1,6 +1,4 @@
-from svast import Wiredec
 from svlex import lexer
-from svnetdata import AssignDependency
 from svyacc import parser
 
 with open("fabs.sv") as f:
@@ -11,11 +9,20 @@ a = parser.parse(data, lexer=lexer, tracking=True)
 # print(a)
 
 fabs = a.find("fabs")
-extract = fabs.content.getNetDependency().extractAssign()
-for i in extract:
-    print(i)
+# print(fabs)
+dep = fabs.getNetDependency()
 
-print(all(map(lambda x: isinstance(x, AssignDependency), extract)))
+
+# print(dep.directDependency)
+# print(dep.trueReg)
+# print(dep.findUpperRegister("dummy3"))
+# dep.findUpperRegisterAll()
+while True:
+    s = input("wire?: ")
+    if s == "quit":
+        break 
+    else:
+        print(dep.findUpperRegister(s))
 
 # always = fabs.content.always[0].content
 # net = always.getNetDependency()

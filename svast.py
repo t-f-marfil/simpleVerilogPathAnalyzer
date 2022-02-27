@@ -271,7 +271,7 @@ class Lhs:
         return ans
 
 
-# class AssignData:
+# class AssignDependency:
 #     def __init__(self, ttype:AssignType, lhsId:list, rhsId:list, dependent=None) -> None:
 #         self.ttype = ttype
 #         self.lhsId = lhsId
@@ -300,8 +300,8 @@ class Assign:
         txt = f"{str(self.lhs)} = {str(self.rhs)}"
         return txt
 
-    def getNetData(self):
-        return AssignData(AssignType.BLOCK, self.lhs.getAllID(), self.rhs.getAllID())
+    def getNetDependency(self):
+        return AssignDependency(AssignType.BLOCK, self.lhs.getAllID(), self.rhs.getAllID())
 
 
 class AlwaysType(Enum):
@@ -338,8 +338,8 @@ class AlwaysAssign:
         txt = f"{str(self.lhs)} {assigntypeTable[self.assigntype]} {str(self.rhs)}"
         return txt
 
-    def getNetData(self):
-        data = AssignData(self.assigntype, self.lhs.getAllID(), self.rhs.getAllID())
+    def getNetDependency(self):
+        data = AssignDependency(self.assigntype, self.lhs.getAllID(), self.rhs.getAllID())
         return data
 
 
@@ -353,8 +353,8 @@ class AlwaysIfblock:
         txt = f"If ({str(self.condition)}):\n" + indent(str(self.content))
         return txt
 
-    def getNetData(self):
-        return (self.condition.getAllID(), self.content.getNetData())
+    def getNetDependency(self):
+        return (self.condition.getAllID(), self.content.getNetDependency())
 
 
 class AlwaysElseblock:
@@ -366,13 +366,13 @@ class AlwaysElseblock:
         txt = "Else:\n" + indent(str(self.content))
         return txt
 
-    def getNetData(self):
-        return self.content.getNetData()
+    def getNetDependency(self):
+        return self.content.getNetDependency()
 
 
-# class IfelseblockData:
+# class IfelseblockDependency:
 #     def __init__(self, condwire:list, ifcontent, elsecontent=None) -> None:
-#         # if/elsecontent of AlwaysContentData
+#         # if/elsecontent of AlwaysContentDependency
 #         self.condwire = condwire
 #         self.ifcontent = ifcontent
 #         self.elsecontent = elsecontent
@@ -405,20 +405,20 @@ class AlwaysIfelseblock:
 
         return txt
 
-    def getNetData(self):
-        condWires, ifcontents = self.ifblock.getNetData()
+    def getNetDependency(self):
+        condWires, ifcontents = self.ifblock.getNetDependency()
         if self.elseblock is not None:
-            elsecontents = self.elseblock.getNetData()
+            elsecontents = self.elseblock.getNetDependency()
         else:
             elsecontents = None
 
-        # ifcont, elsecont, both are instances of AlwaysContentData
-        return IfelseblockData(condWires, ifcontents, elsecontents)
+        # ifcont, elsecont, both are instances of AlwaysContentDependency
+        return IfelseblockDependency(condWires, ifcontents, elsecontents)
 
 
-# class AlwaysContentData:
+# class AlwaysContentDependency:
 #     def __init__(self, assign:list, ifelse:list) -> None:
-#         # assignData, IfelseblockData
+#         # assignData, IfelseblockDependency
 #         self.assign = assign
 #         self.ifelse = ifelse
 
@@ -450,11 +450,11 @@ class AlwaysContent:
         self.ifelseblocks += [ifelseblock]
         return self
 
-    def getNetData(self):
-        assignData = [i.getNetData() for i in self.assigns]
-        ifelseData = [i.getNetData() for i in self.ifelseblocks]
+    def getNetDependency(self):
+        assignData = [i.getNetDependency() for i in self.assigns]
+        ifelseData = [i.getNetDependency() for i in self.ifelseblocks]
 
-        return AlwaysContentData(assignData, ifelseData)
+        return AlwaysContentDependency(assignData, ifelseData)
 
 
 class Always:
@@ -475,6 +475,9 @@ class Always:
         txt += ":\n" + indent(str(self.content))
 
         return txt
+
+    def getNetDependency(self):
+        return  self.content.getNetDependency()
 
 
 class WiredecDuplicateErr(Exception):
@@ -546,6 +549,10 @@ class ModuleContent:
     def findWiredec(self, key):
         return self.wiredecs.get(key, None)
 
+    def getNetDependency(self):
+        assignlst = [i.getNetDependency() for i in self.assigns]
+        alwayslst = [i.getNetDependency() for i in self.always]
+        return ModuleContentDependency(assignlst, alwayslst)
 
 
 class Module:

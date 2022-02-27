@@ -1,6 +1,6 @@
 from svutils import *
 
-class AssignData:
+class AssignDependency:
     def __init__(self, ttype:AssignType, lhsId:list, rhsId:list, dependent=None) -> None:
         self.ttype = ttype
         self.lhsId = lhsId
@@ -28,12 +28,12 @@ class AssignData:
         return self
 
 
-class IfelseblockData:
+class IfelseblockDependency:
     def __init__(self, condwire:list, ifcontent, elsecontent=None) -> None:
-        # if/elsecontent of AlwaysContentData
+        # if/elsecontent of AlwaysContentDependency
         self.condwire = condwire
         self.ifcontent = ifcontent
-        self.elsecontent = elsecontent if elsecontent is not None else AlwaysContentData([], [])
+        self.elsecontent = elsecontent if elsecontent is not None else AlwaysContentDependency([], [])
 
     def __str__(self) -> str:
         txt = "If content with " + f"({', '.join(self.condwire) if len(self.condwire) > 0 else 'None'})"
@@ -58,9 +58,9 @@ class IfelseblockData:
         return [i.addDependent(self.condwire) for i in allassigns]
 
 
-class AlwaysContentData:
+class AlwaysContentDependency:
     def __init__(self, assign:list, ifelse:list) -> None:
-        # assignData list, IfelseblockData list
+        # AssignDependency list, IfelseblockDependency list
         self.assign = assign
         self.ifelse = ifelse
 
@@ -78,3 +78,16 @@ class AlwaysContentData:
     def extractAssign(self):
         lst = self.assign + self.ifFlatten()
         return [i.includeDependent() for i in lst]
+
+
+class ModuleContentDependency:
+    def __init__(self, assigndep:list, alwaysdep:list) -> None:
+        self.assigndep = assigndep
+        self.alwaysdep = alwaysdep
+        
+    def extractAssign(self):
+        lst = self.assigndep
+        for j in [i.extractAssign() for i in self.alwaysdep]:
+            lst += j 
+
+        return lst

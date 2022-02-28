@@ -84,8 +84,9 @@ def p_oneparam(p):
 def p_arithexpr(p):
     """
     arithexpr : NUMBER
+              | ID
     """
-    p[0] = int(p[1])
+    p[0] = ArithExpr(ArithExprType.LITERAL, p[1])
     return 
 
 
@@ -430,7 +431,7 @@ def p_wireval_0(p):
     wireval : ALLHIGH
             | ALLLOW
             | LITWIRE
-            | arithexpr
+            | NUMBER
             | '{' wireconcat '}'
             | '(' wireexpr ')'
             | ID '[' arithexpr ':' arithexpr ']'

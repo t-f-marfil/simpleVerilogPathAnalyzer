@@ -1,4 +1,5 @@
 from enum import Enum, auto
+import re
 
 from svutils import *
 from svnetdata import *
@@ -186,7 +187,7 @@ class WireExpr:
         2: wireconcat (list)
         3: wireval wireop wireexpr (list(3))
         4: wireval? wireexpr : wireexpr (list(3))
-        5: ID[n:m] (list(3))
+        5: ID[n:m] (list(3) of arithexpr)
         6: '1 /'0 / LITWIRE (str)
         7: unaop wireval (list(2))
         """
@@ -233,6 +234,9 @@ class WireExpr:
                 node.getAllIDCore(anslist)
         elif self.ttype == WireExprType.IDSLICE:
             anslist += [self.data[0]]
+            _, msb, lsb = self.data
+            msb.getAllIDCore(anslist)
+            lsb.getAllIDCore(anslist)
         elif self.ttype == WireExprType.UNAOP:
             self.data[1].getAllIDCore(anslist)
 
@@ -243,6 +247,48 @@ class WireExpr:
         self.getAllIDCore(ans)
 
         return ans
+
+class ArithExprType(Enum):
+    LITERAL = auto()
+    BINOP = auto()
+
+class ArithExpr:
+    def __init__(self, ttype, data) -> None:
+        """
+        ttype
+        1. LITERAL (str, maybe litwire/number/id)
+        2. expr op expr (list(3))
+        """
+        self.ttype = ttype
+        self.data = data
+
+    def __str__(self) -> str:
+        txt = ""
+        if self.ttype == ArithExprType.LITERAL:
+            txt = str(self.data)
+        elif self.ttype == ArithExprType.BINOP:
+            txt = f"{str(self.data[0])} {str(self.data[1])} {str(self.data[2])}"
+        else:
+            assert False
+
+        return txt
+        
+    def getAllIDCore(self, anslist):
+        if self.ttype == ArithExprType.LITERAL:
+            pat = re.compile(r"[0-9]+|[0-9]+'(h|d|b)[0-9]+")
+            if re.fullmatch(pat, self.data) is None:
+                anslist += [self.data]
+        elif self.ttype == ArithExprType.BINOP:
+            uno, _, dos = self.data
+            uno.getAllIDCore(anslist)
+            dos.getAllIDCore(anslist)
+        else:
+            assert False 
+
+    def getAllID(self):
+        lst = []
+        self.getAllIDCore(lst)
+        return lst
 
 
 class LhsType(Enum):

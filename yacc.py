@@ -7,7 +7,7 @@ with open("fabs.sv") as f:
 
 # a = parser.parse(data, lexer=lexer, tracking=True, debug=True)
 a = parser.parse(data, lexer=lexer, tracking=True)
-# print(a)
+print(a)
 
 # for mod in a.modules.values():
 #     print(mod.getNetDependency())
@@ -16,20 +16,20 @@ a = parser.parse(data, lexer=lexer, tracking=True)
 # print(dep.trueReg)
 # print(dep.findUpperRegister("dummy3"))
 
-dep = list(a.modules.values())[1].getNetDependency()
+dep = list(a.modules.values())[0].getNetDependency()
 # dep.findUpperRegisterAll()
 
-# for i in dep.flattened:
-#     print(i)
-
+for i in dep.flattened:
+    print(i)
+# print(a)
 # print(dep.upperRegData)
 
-while True:
-    s = input("wire?: ")
-    if s == "quit":
-        break 
-    else:
-        print(dep.findUpperRegister(s))
+# while True:
+#     s = input("wire?: ")
+#     if s == "quit":
+#         break 
+#     else:
+#         print(dep.findUpperRegister(s))
 
 # always = fabs.content.always[0].content
 # net = always.getNetDependency()

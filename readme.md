@@ -7,6 +7,22 @@ Intended to give a hint to find a critical path in the source.
 PLY(Python Lex-Yacc) 3.11
 
 ## Example
+sample.sv is in the repository.
+```SystemVerilog
+module faddmc (
+    input clk, resetn,
+    input [31:0] op1,
+    input [31:0] op2,
+
+    output [31:0] ret
+);
+
+    wire [7:0] exp1 = op1[30:23], exp2 = op2[30:23];
+    wire [23:0] premanti1 = {1'b1, op1[22:0]}, premanti2 = {1'b1, op2[22:0]};
+...
+```
+
+### Demo
 ```
 > py svanalyzer.py sample.sv
 

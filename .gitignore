@@ -3,6 +3,7 @@ out*\.txt
 *\.ipynb
 *\.sv
 !sample.sv
+yacc.py
 
 parser.out 
 parsetab.py

@@ -23,7 +23,7 @@ class SourceAnalyzer:
         self.currentdependency = None
 
         if len(self.modulenames) > 0:
-            self.setCurrentModule(list(self.modulenames)[0])
+            self.setCurrentModule(list(self.modulenames)[-1])
 
     def setCurrentModule(self, name:str):
         target = self.source.findModule(name)
@@ -46,14 +46,17 @@ class SourceAnalyzer:
 
 
 if __name__ == "__main__":
-    with open("fabs.sv") as f:
+    with open(sys.argv[1]) as f:
         data = f.read()
 
+    print()
     src = parser.parse(data, lexer=lexer, tracking=True)
     inst = SourceAnalyzer(src)
 
     while True:
+        print()
         s = input(f"{str(inst.currentmodulename)} > ")
+        print()
 
         setmodule = re.compile(r"module [A-z0-9]+")
 
@@ -76,7 +79,7 @@ if __name__ == "__main__":
         else:
             try:
                 up, direct = inst.findWire(s)
-                print(indent(f"Direct dependency:\n  {str(None if direct is None else ', '.join(direct))}"))
-                print(indent(f"Upstream registers:\n  {str(None if direct is None else ', '.join(up))}"))
+                print(indent(f"Direct dependency:\n  {str(None if direct == () or direct is None else ', '.join(direct))}\n"))
+                print(indent(f"Upstream registers:\n  {str(None if up == [] or up is None else ', '.join(up))}"))
             except NoCurrentModule as e:
                 print(e)

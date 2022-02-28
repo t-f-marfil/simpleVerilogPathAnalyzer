@@ -6,6 +6,9 @@ Intended to give a hint to find a critical path in the source.
 ## Requirements
 PLY(Python Lex-Yacc) 3.11
 
+## Notes
+not all verilog grammars can be accepted. 
+
 ## Example
 sample.sv is in the repository.
 ```SystemVerilog

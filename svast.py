@@ -88,7 +88,7 @@ class PortType:
 
 
     def __str__(self) -> str:
-        return portInoutTable[self.inout]
+        return portInoutTable[self.inout] + f" {self.wiretype}"
 
 
 class OnePort:
@@ -112,18 +112,18 @@ class Port:
         self.ports = {}
 
     def addPort(self, oneport:OnePort):
-        # self.ports = [oneport] + self.ports 
         if oneport.name in self.ports:
             raise PortDuplicateErr(f"{oneport.name} is declared twice")
 
         self.ports[oneport.name] = oneport
+            
         return self
 
     def __str__(self) -> str:
         txt = "Port:"
 
         txtcore = ""
-        for i in reversed(self.ports.values()):
+        for i in self.ports.values():
             txtcore += "\n" + str(i)
 
         if len(self.ports) == 0:

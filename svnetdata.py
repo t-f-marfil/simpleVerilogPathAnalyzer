@@ -116,6 +116,7 @@ class ModuleContentDependency:
             trueReg = set()
 
             deplist = self.extractAssign()
+            self.flattened = deplist
 
             for item in deplist:
                 lhs, rhs, assigntype = item.lhsId, item.rhsId, item.ttype
@@ -154,6 +155,7 @@ class ModuleContentDependency:
             raise Exception("self.port is not given.")
 
         val = self.upperRegData.get(tag, None)
+        # print(self.directDependency, tag)
         if val is None:
             lst = []
             try:
@@ -171,7 +173,9 @@ class ModuleContentDependency:
                 key = str(e).replace("'", "")
                 
                 if key in self.inportNames:
-                    print(f"{key} is an input port.")                
+                    print(f"{key} is an input port.") 
+                else:
+                    print(f"no dependency found on \"{key}\".")
 
             lst = list(set(lst))
             self.upperRegData[tag] = lst 
@@ -181,6 +185,9 @@ class ModuleContentDependency:
             return val
 
     def findUpperRegisterAll(self):
-        for tag in self.directDependency:
-            self.findUpperRegister(tag)
+        try:
+            for tag in self.directDependency:
+                self.findUpperRegister(tag)
+        except RecursionError as e:
+            raise Exception(str(e) + "\ninfinite loop in wires.")
 

@@ -3,8 +3,6 @@ Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 Unused terminals:
 
     LOCALPARAM
-    LSHIFT
-    RSHIFT
 
 Grammar
 
@@ -20,170 +18,198 @@ Rule 8     paramplus -> , oneparam paramplus
 Rule 9     paramplus -> empty
 Rule 10    oneparam -> PARAMETER ID = arithexpr
 Rule 11    arithexpr -> NUMBER
-Rule 12    portdec -> ( ports )
-Rule 13    ports -> oneport portplus
-Rule 14    ports -> empty
-Rule 15    portplus -> , oneport portplus
+Rule 12    portdec -> ( ports
+Rule 13    ports -> porttype portplus
+Rule 14    ports -> )
+Rule 15    portplus -> wireslice idsterminal portplus
 Rule 16    portplus -> empty
-Rule 17    oneport -> inouttype ID
-Rule 18    oneport -> inouttype [ arithexpr : arithexpr ] ID
-Rule 19    inouttype -> INPUT
-Rule 20    inouttype -> OUTPUT
-Rule 21    inouttype -> INPUT wiretype
-Rule 22    inouttype -> OUTPUT wiretype
-Rule 23    modulecontent -> wiredec ; modulecontent
-Rule 24    modulecontent -> assign ; modulecontent
-Rule 25    modulecontent -> always modulecontent
-Rule 26    modulecontent -> empty
-Rule 27    wiredec -> wiretype [ arithexpr : arithexpr ] ID
-Rule 28    wiredec -> wiretype ID
-Rule 29    wiretype -> WIRE
-Rule 30    wiretype -> REG
-Rule 31    wiretype -> LOGIC
-Rule 32    assign -> ASSIGN lhs = wireexpr
-Rule 33    always -> ALWAYS @ sensitivity alwayscontblock
-Rule 34    always -> ALWAYSFF @ sensitivity alwayscontblock
-Rule 35    always -> ALWAYSCOMB alwayscontblock
-Rule 36    sensitivity -> ( edge ID )
-Rule 37    edge -> POSEDGE
-Rule 38    edge -> NEGEDGE
-Rule 39    alwayscontblock -> BEGIN alwayscont END
-Rule 40    alwayscont -> oneassign ; alwayscont
-Rule 41    alwayscont -> ifblock alwayscont
-Rule 42    alwayscont -> ifblock elseblock alwayscont
-Rule 43    alwayscont -> empty
-Rule 44    oneassign -> lhs = wireexpr
-Rule 45    oneassign -> lhs NONBLOCK wireexpr
-Rule 46    ifblock -> IF ( wireexpr ) BEGIN alwayscont END
-Rule 47    elseblock -> ELSE ifblock
-Rule 48    elseblock -> ELSE ifblock elseblock
-Rule 49    elseblock -> ELSE BEGIN alwayscont END
-Rule 50    lhs -> ID
-Rule 51    lhs -> ID [ arithexpr : arithexpr ]
-Rule 52    lhs -> { lhsconcat }
-Rule 53    lhsconcat -> lhs
-Rule 54    lhsconcat -> lhs , lhsconcat
-Rule 55    wireexpr -> wireval
-Rule 56    wireexpr -> wireval wireop wireexpr
-Rule 57    wireexpr -> wireval ? wireexpr : wireexpr
-Rule 58    wireval -> ALLHIGH
-Rule 59    wireval -> ALLLOW
-Rule 60    wireval -> LITWIRE
-Rule 61    wireval -> { wireconcat }
-Rule 62    wireval -> ( wireexpr )
-Rule 63    wireval -> ID [ arithexpr : arithexpr ]
-Rule 64    wireval -> ID [ arithexpr ]
-Rule 65    wireval -> unaop wireval
-Rule 66    unaop -> ~
-Rule 67    unaop -> &
-Rule 68    unaop -> ^
-Rule 69    unaop -> |
-Rule 70    wireval -> ID
-Rule 71    wireconcat -> wireexpr
-Rule 72    wireconcat -> wireexpr , wireconcat
-Rule 73    wireop -> +
-Rule 74    wireop -> -
-Rule 75    wireop -> *
-Rule 76    wireop -> &
-Rule 77    wireop -> |
-Rule 78    wireop -> ^
-Rule 79    wireop -> <
-Rule 80    wireop -> >
-Rule 81    wireop -> EQ
-Rule 82    wireop -> GEQ
-Rule 83    wireop -> LEQ
-Rule 84    empty -> <empty>
+Rule 17    idsterminal -> ID portterminal
+Rule 18    idsterminal -> ID , idsterminal
+Rule 19    portterminal -> )
+Rule 20    portterminal -> , porttype
+Rule 21    wireslice -> [ arithexpr : arithexpr ]
+Rule 22    wireslice -> empty
+Rule 23    porttype -> inout
+Rule 24    porttype -> inout wiretype
+Rule 25    inout -> INPUT
+Rule 26    inout -> OUTPUT
+Rule 27    modulecontent -> wiredec ; modulecontent
+Rule 28    modulecontent -> assign ; modulecontent
+Rule 29    modulecontent -> always modulecontent
+Rule 30    modulecontent -> moduleinst ; modulecontent
+Rule 31    modulecontent -> empty
+Rule 32    wiredec -> wiretype [ arithexpr : arithexpr ] idassigns
+Rule 33    wiredec -> wiretype [ arithexpr : arithexpr ] ID [ arithexpr : arithexpr ]
+Rule 34    wiredec -> wiretype idassigns
+Rule 35    idassigns -> oneidassign
+Rule 36    idassigns -> oneidassign , idassigns
+Rule 37    oneidassign -> ID
+Rule 38    oneidassign -> ID = wireexpr
+Rule 39    wiretype -> WIRE
+Rule 40    wiretype -> REG
+Rule 41    wiretype -> LOGIC
+Rule 42    assign -> ASSIGN lhs = wireexpr
+Rule 43    always -> ALWAYS @ sensitivity alwayscontblock
+Rule 44    always -> ALWAYSFF @ sensitivity alwayscontblock
+Rule 45    always -> ALWAYSCOMB alwayscontblock
+Rule 46    sensitivity -> ( edge ID )
+Rule 47    edge -> POSEDGE
+Rule 48    edge -> NEGEDGE
+Rule 49    alwayscontblock -> BEGIN alwayscont END
+Rule 50    alwayscont -> oneassign ; alwayscont
+Rule 51    alwayscont -> ifblock alwayscont
+Rule 52    alwayscont -> ifblock elseblock alwayscont
+Rule 53    alwayscont -> empty
+Rule 54    oneassign -> lhs = wireexpr
+Rule 55    oneassign -> lhs NONBLOCK wireexpr
+Rule 56    ifblock -> IF ( wireexpr ) BEGIN alwayscont END
+Rule 57    elseblock -> ELSE ifblock
+Rule 58    elseblock -> ELSE ifblock elseblock
+Rule 59    elseblock -> ELSE BEGIN alwayscont END
+Rule 60    lhs -> ID
+Rule 61    lhs -> ID [ arithexpr : arithexpr ]
+Rule 62    lhs -> { lhsconcat }
+Rule 63    lhsconcat -> lhs
+Rule 64    lhsconcat -> lhs , lhsconcat
+Rule 65    wireexpr -> wireval
+Rule 66    wireexpr -> wireval wireop wireexpr
+Rule 67    wireexpr -> wireval ? wireexpr : wireexpr
+Rule 68    wireval -> ALLHIGH
+Rule 69    wireval -> ALLLOW
+Rule 70    wireval -> LITWIRE
+Rule 71    wireval -> arithexpr
+Rule 72    wireval -> { wireconcat }
+Rule 73    wireval -> ( wireexpr )
+Rule 74    wireval -> ID [ arithexpr : arithexpr ]
+Rule 75    wireval -> ID [ wireexpr ]
+Rule 76    wireval -> unaop wireval
+Rule 77    unaop -> ~
+Rule 78    unaop -> &
+Rule 79    unaop -> ^
+Rule 80    unaop -> |
+Rule 81    wireval -> ID
+Rule 82    wireconcat -> wireexpr
+Rule 83    wireconcat -> wireexpr , wireconcat
+Rule 84    wireop -> +
+Rule 85    wireop -> -
+Rule 86    wireop -> *
+Rule 87    wireop -> &
+Rule 88    wireop -> |
+Rule 89    wireop -> ^
+Rule 90    wireop -> <
+Rule 91    wireop -> >
+Rule 92    wireop -> LSHIFT
+Rule 93    wireop -> RSHIFT
+Rule 94    wireop -> EQ
+Rule 95    wireop -> GEQ
+Rule 96    wireop -> LEQ
+Rule 97    moduleinst -> ID ID ( modportassign )
+Rule 98    modportassign -> oneportassign
+Rule 99    modportassign -> oneportassign , modportassign
+Rule 100   modportassign -> empty
+Rule 101   oneportassign -> wireexpr
+Rule 102   oneportassign -> . ID ( wireexpr )
+Rule 103   empty -> <empty>
 
 Terminals, with rules where they appear
 
 #                    : 5
-&                    : 67 76
-(                    : 5 12 36 46 62
-)                    : 5 12 36 46 62
-*                    : 75
-+                    : 73
-,                    : 8 15 54 72
--                    : 74
-:                    : 18 27 51 57 63
-;                    : 3 4 23 24 40
-<                    : 79
-=                    : 10 32 44
->                    : 80
-?                    : 57
-@                    : 33 34
-ALLHIGH              : 58
-ALLLOW               : 59
-ALWAYS               : 33
-ALWAYSCOMB           : 35
-ALWAYSFF             : 34
-ASSIGN               : 32
-BEGIN                : 39 46 49
-ELSE                 : 47 48 49
-END                  : 39 46 49
+&                    : 78 87
+(                    : 5 12 46 56 73 97 102
+)                    : 5 14 19 46 56 73 97 102
+*                    : 86
++                    : 84
+,                    : 8 18 20 36 64 83 99
+-                    : 85
+.                    : 102
+:                    : 21 32 33 33 61 67 74
+;                    : 3 4 27 28 30 50
+<                    : 90
+=                    : 10 38 42 54
+>                    : 91
+?                    : 67
+@                    : 43 44
+ALLHIGH              : 68
+ALLLOW               : 69
+ALWAYS               : 43
+ALWAYSCOMB           : 45
+ALWAYSFF             : 44
+ASSIGN               : 42
+BEGIN                : 49 56 59
+ELSE                 : 57 58 59
+END                  : 49 56 59
 ENDMODULE            : 3 4
-EQ                   : 81
-GEQ                  : 82
-ID                   : 3 4 10 17 18 27 28 36 50 51 63 64 70
-IF                   : 46
-INPUT                : 19 21
-LEQ                  : 83
-LITWIRE              : 60
+EQ                   : 94
+GEQ                  : 95
+ID                   : 3 4 10 17 18 33 37 38 46 60 61 74 75 81 97 97 102
+IF                   : 56
+INPUT                : 25
+LEQ                  : 96
+LITWIRE              : 70
 LOCALPARAM           : 
-LOGIC                : 31
-LSHIFT               : 
+LOGIC                : 41
+LSHIFT               : 92
 MODULE               : 3 4
-NEGEDGE              : 38
-NONBLOCK             : 45
+NEGEDGE              : 48
+NONBLOCK             : 55
 NUMBER               : 11
-OUTPUT               : 20 22
+OUTPUT               : 26
 PARAMETER            : 10
-POSEDGE              : 37
-REG                  : 30
-RSHIFT               : 
-WIRE                 : 29
-[                    : 18 27 51 63 64
-]                    : 18 27 51 63 64
-^                    : 68 78
+POSEDGE              : 47
+REG                  : 40
+RSHIFT               : 93
+WIRE                 : 39
+[                    : 21 32 33 33 61 74 75
+]                    : 21 32 33 33 61 74 75
+^                    : 79 89
 error                : 
-{                    : 52 61
-|                    : 69 77
-}                    : 52 61
-~                    : 66
+{                    : 62 72
+|                    : 80 88
+}                    : 62 72
+~                    : 77
 
 Nonterminals, with rules where they appear
 
-always               : 25
-alwayscont           : 39 40 41 42 46 49
-alwayscontblock      : 33 34 35
-arithexpr            : 10 18 18 27 27 51 51 63 63 64
-assign               : 24
-edge                 : 36
-elseblock            : 42 48
-empty                : 2 7 9 14 16 26 43
-ifblock              : 41 42 47 48
-inouttype            : 17 18
-lhs                  : 32 44 45 53 54
-lhsconcat            : 52 54
-modulecontent        : 3 4 23 24 25
+always               : 29
+alwayscont           : 49 50 51 52 56 59
+alwayscontblock      : 43 44 45
+arithexpr            : 10 21 21 32 32 33 33 33 33 61 61 71 74 74
+assign               : 28
+edge                 : 46
+elseblock            : 52 58
+empty                : 2 7 9 16 22 31 53 100
+idassigns            : 32 34 36
+idsterminal          : 15 18
+ifblock              : 51 52 57 58
+inout                : 23 24
+lhs                  : 42 54 55 63 64
+lhsconcat            : 62 64
+modportassign        : 97 99
+modulecontent        : 3 4 27 28 29 30
 moduledec            : 1
-oneassign            : 40
+moduleinst           : 30
+oneassign            : 50
+oneidassign          : 35 36
 oneparam             : 6 8
-oneport              : 13 15
+oneportassign        : 98 99
 paramdec             : 3
 paramplus            : 6 8
 params               : 5
 portdec              : 3 4
 portplus             : 13 15
 ports                : 12
-sensitivity          : 33 34
+portterminal         : 17
+porttype             : 13 20
+sensitivity          : 43 44
 source               : 1 0
-unaop                : 65
-wireconcat           : 61 72
-wiredec              : 23
-wireexpr             : 32 44 45 46 56 57 57 62 71 72
-wireop               : 56
-wiretype             : 21 22 27 28
-wireval              : 55 56 57 65
+unaop                : 76
+wireconcat           : 72 83
+wiredec              : 27
+wireexpr             : 38 42 54 55 56 66 67 67 73 75 82 83 101 102
+wireop               : 66
+wireslice            : 15
+wiretype             : 24 32 33 34
+wireval              : 65 66 67 76
 
 Parsing method: LALR
 
@@ -194,10 +220,10 @@ state 0
     (2) source -> . empty
     (3) moduledec -> . MODULE ID paramdec portdec ; modulecontent ENDMODULE
     (4) moduledec -> . MODULE ID portdec ; modulecontent ENDMODULE
-    (84) empty -> .
+    (103) empty -> .
 
     MODULE          shift and go to state 4
-    $end            reduce using rule 84 (empty -> .)
+    $end            reduce using rule 103 (empty -> .)
 
     source                         shift and go to state 1
     moduledec                      shift and go to state 2
@@ -216,10 +242,10 @@ state 2
     (2) source -> . empty
     (3) moduledec -> . MODULE ID paramdec portdec ; modulecontent ENDMODULE
     (4) moduledec -> . MODULE ID portdec ; modulecontent ENDMODULE
-    (84) empty -> .
+    (103) empty -> .
 
     MODULE          shift and go to state 4
-    $end            reduce using rule 84 (empty -> .)
+    $end            reduce using rule 103 (empty -> .)
 
     moduledec                      shift and go to state 2
     source                         shift and go to state 5
@@ -252,7 +278,7 @@ state 6
     (3) moduledec -> MODULE ID . paramdec portdec ; modulecontent ENDMODULE
     (4) moduledec -> MODULE ID . portdec ; modulecontent ENDMODULE
     (5) paramdec -> . # ( params )
-    (12) portdec -> . ( ports )
+    (12) portdec -> . ( ports
 
     #               shift and go to state 9
     (               shift and go to state 10
@@ -263,7 +289,7 @@ state 6
 state 7
 
     (3) moduledec -> MODULE ID paramdec . portdec ; modulecontent ENDMODULE
-    (12) portdec -> . ( ports )
+    (12) portdec -> . ( ports
 
     (               shift and go to state 10
 
@@ -285,25 +311,21 @@ state 9
 
 state 10
 
-    (12) portdec -> ( . ports )
-    (13) ports -> . oneport portplus
-    (14) ports -> . empty
-    (17) oneport -> . inouttype ID
-    (18) oneport -> . inouttype [ arithexpr : arithexpr ] ID
-    (84) empty -> .
-    (19) inouttype -> . INPUT
-    (20) inouttype -> . OUTPUT
-    (21) inouttype -> . INPUT wiretype
-    (22) inouttype -> . OUTPUT wiretype
+    (12) portdec -> ( . ports
+    (13) ports -> . porttype portplus
+    (14) ports -> . )
+    (23) porttype -> . inout
+    (24) porttype -> . inout wiretype
+    (25) inout -> . INPUT
+    (26) inout -> . OUTPUT
 
-    )               reduce using rule 84 (empty -> .)
+    )               shift and go to state 16
     INPUT           shift and go to state 18
     OUTPUT          shift and go to state 19
 
     ports                          shift and go to state 14
-    oneport                        shift and go to state 15
-    empty                          shift and go to state 16
-    inouttype                      shift and go to state 17
+    porttype                       shift and go to state 15
+    inout                          shift and go to state 17
 
 state 11
 
@@ -315,36 +337,41 @@ state 11
 state 12
 
     (4) moduledec -> MODULE ID portdec ; . modulecontent ENDMODULE
-    (23) modulecontent -> . wiredec ; modulecontent
-    (24) modulecontent -> . assign ; modulecontent
-    (25) modulecontent -> . always modulecontent
-    (26) modulecontent -> . empty
-    (27) wiredec -> . wiretype [ arithexpr : arithexpr ] ID
-    (28) wiredec -> . wiretype ID
-    (32) assign -> . ASSIGN lhs = wireexpr
-    (33) always -> . ALWAYS @ sensitivity alwayscontblock
-    (34) always -> . ALWAYSFF @ sensitivity alwayscontblock
-    (35) always -> . ALWAYSCOMB alwayscontblock
-    (84) empty -> .
-    (29) wiretype -> . WIRE
-    (30) wiretype -> . REG
-    (31) wiretype -> . LOGIC
+    (27) modulecontent -> . wiredec ; modulecontent
+    (28) modulecontent -> . assign ; modulecontent
+    (29) modulecontent -> . always modulecontent
+    (30) modulecontent -> . moduleinst ; modulecontent
+    (31) modulecontent -> . empty
+    (32) wiredec -> . wiretype [ arithexpr : arithexpr ] idassigns
+    (33) wiredec -> . wiretype [ arithexpr : arithexpr ] ID [ arithexpr : arithexpr ]
+    (34) wiredec -> . wiretype idassigns
+    (42) assign -> . ASSIGN lhs = wireexpr
+    (43) always -> . ALWAYS @ sensitivity alwayscontblock
+    (44) always -> . ALWAYSFF @ sensitivity alwayscontblock
+    (45) always -> . ALWAYSCOMB alwayscontblock
+    (97) moduleinst -> . ID ID ( modportassign )
+    (103) empty -> .
+    (39) wiretype -> . WIRE
+    (40) wiretype -> . REG
+    (41) wiretype -> . LOGIC
 
-    ASSIGN          shift and go to state 27
-    ALWAYS          shift and go to state 28
-    ALWAYSFF        shift and go to state 29
-    ALWAYSCOMB      shift and go to state 30
-    ENDMODULE       reduce using rule 84 (empty -> .)
-    WIRE            shift and go to state 31
-    REG             shift and go to state 32
-    LOGIC           shift and go to state 33
+    ASSIGN          shift and go to state 29
+    ALWAYS          shift and go to state 30
+    ALWAYSFF        shift and go to state 31
+    ALWAYSCOMB      shift and go to state 32
+    ID              shift and go to state 21
+    ENDMODULE       reduce using rule 103 (empty -> .)
+    WIRE            shift and go to state 33
+    REG             shift and go to state 34
+    LOGIC           shift and go to state 35
 
-    modulecontent                  shift and go to state 21
-    wiredec                        shift and go to state 22
-    assign                         shift and go to state 23
-    always                         shift and go to state 24
-    empty                          shift and go to state 25
-    wiretype                       shift and go to state 26
+    modulecontent                  shift and go to state 22
+    wiredec                        shift and go to state 23
+    assign                         shift and go to state 24
+    always                         shift and go to state 25
+    moduleinst                     shift and go to state 26
+    empty                          shift and go to state 27
+    wiretype                       shift and go to state 28
 
 state 13
 
@@ -352,356 +379,375 @@ state 13
     (6) params -> . oneparam paramplus
     (7) params -> . empty
     (10) oneparam -> . PARAMETER ID = arithexpr
-    (84) empty -> .
+    (103) empty -> .
 
-    PARAMETER       shift and go to state 37
-    )               reduce using rule 84 (empty -> .)
+    PARAMETER       shift and go to state 39
+    )               reduce using rule 103 (empty -> .)
 
-    params                         shift and go to state 34
-    oneparam                       shift and go to state 35
-    empty                          shift and go to state 36
+    params                         shift and go to state 36
+    oneparam                       shift and go to state 37
+    empty                          shift and go to state 38
 
 state 14
 
-    (12) portdec -> ( ports . )
+    (12) portdec -> ( ports .
 
-    )               shift and go to state 38
+    ;               reduce using rule 12 (portdec -> ( ports .)
 
 
 state 15
 
-    (13) ports -> oneport . portplus
-    (15) portplus -> . , oneport portplus
+    (13) ports -> porttype . portplus
+    (15) portplus -> . wireslice idsterminal portplus
     (16) portplus -> . empty
-    (84) empty -> .
+    (21) wireslice -> . [ arithexpr : arithexpr ]
+    (22) wireslice -> . empty
+    (103) empty -> .
 
-    ,               shift and go to state 40
-    )               reduce using rule 84 (empty -> .)
+    [               shift and go to state 43
+    ;               reduce using rule 103 (empty -> .)
+    ID              reduce using rule 103 (empty -> .)
 
-    portplus                       shift and go to state 39
-    empty                          shift and go to state 41
+    portplus                       shift and go to state 40
+    wireslice                      shift and go to state 41
+    empty                          shift and go to state 42
 
 state 16
 
-    (14) ports -> empty .
+    (14) ports -> ) .
 
-    )               reduce using rule 14 (ports -> empty .)
+    ;               reduce using rule 14 (ports -> ) .)
 
 
 state 17
 
-    (17) oneport -> inouttype . ID
-    (18) oneport -> inouttype . [ arithexpr : arithexpr ] ID
+    (23) porttype -> inout .
+    (24) porttype -> inout . wiretype
+    (39) wiretype -> . WIRE
+    (40) wiretype -> . REG
+    (41) wiretype -> . LOGIC
 
-    ID              shift and go to state 42
-    [               shift and go to state 43
-
-
-state 18
-
-    (19) inouttype -> INPUT .
-    (21) inouttype -> INPUT . wiretype
-    (29) wiretype -> . WIRE
-    (30) wiretype -> . REG
-    (31) wiretype -> . LOGIC
-
-    ID              reduce using rule 19 (inouttype -> INPUT .)
-    [               reduce using rule 19 (inouttype -> INPUT .)
-    WIRE            shift and go to state 31
-    REG             shift and go to state 32
-    LOGIC           shift and go to state 33
+    [               reduce using rule 23 (porttype -> inout .)
+    ID              reduce using rule 23 (porttype -> inout .)
+    ;               reduce using rule 23 (porttype -> inout .)
+    WIRE            shift and go to state 33
+    REG             shift and go to state 34
+    LOGIC           shift and go to state 35
 
     wiretype                       shift and go to state 44
 
+state 18
+
+    (25) inout -> INPUT .
+
+    WIRE            reduce using rule 25 (inout -> INPUT .)
+    REG             reduce using rule 25 (inout -> INPUT .)
+    LOGIC           reduce using rule 25 (inout -> INPUT .)
+    [               reduce using rule 25 (inout -> INPUT .)
+    ID              reduce using rule 25 (inout -> INPUT .)
+    ;               reduce using rule 25 (inout -> INPUT .)
+
+
 state 19
 
-    (20) inouttype -> OUTPUT .
-    (22) inouttype -> OUTPUT . wiretype
-    (29) wiretype -> . WIRE
-    (30) wiretype -> . REG
-    (31) wiretype -> . LOGIC
+    (26) inout -> OUTPUT .
 
-    ID              reduce using rule 20 (inouttype -> OUTPUT .)
-    [               reduce using rule 20 (inouttype -> OUTPUT .)
-    WIRE            shift and go to state 31
-    REG             shift and go to state 32
-    LOGIC           shift and go to state 33
+    WIRE            reduce using rule 26 (inout -> OUTPUT .)
+    REG             reduce using rule 26 (inout -> OUTPUT .)
+    LOGIC           reduce using rule 26 (inout -> OUTPUT .)
+    [               reduce using rule 26 (inout -> OUTPUT .)
+    ID              reduce using rule 26 (inout -> OUTPUT .)
+    ;               reduce using rule 26 (inout -> OUTPUT .)
 
-    wiretype                       shift and go to state 45
 
 state 20
 
     (3) moduledec -> MODULE ID paramdec portdec ; . modulecontent ENDMODULE
-    (23) modulecontent -> . wiredec ; modulecontent
-    (24) modulecontent -> . assign ; modulecontent
-    (25) modulecontent -> . always modulecontent
-    (26) modulecontent -> . empty
-    (27) wiredec -> . wiretype [ arithexpr : arithexpr ] ID
-    (28) wiredec -> . wiretype ID
-    (32) assign -> . ASSIGN lhs = wireexpr
-    (33) always -> . ALWAYS @ sensitivity alwayscontblock
-    (34) always -> . ALWAYSFF @ sensitivity alwayscontblock
-    (35) always -> . ALWAYSCOMB alwayscontblock
-    (84) empty -> .
-    (29) wiretype -> . WIRE
-    (30) wiretype -> . REG
-    (31) wiretype -> . LOGIC
+    (27) modulecontent -> . wiredec ; modulecontent
+    (28) modulecontent -> . assign ; modulecontent
+    (29) modulecontent -> . always modulecontent
+    (30) modulecontent -> . moduleinst ; modulecontent
+    (31) modulecontent -> . empty
+    (32) wiredec -> . wiretype [ arithexpr : arithexpr ] idassigns
+    (33) wiredec -> . wiretype [ arithexpr : arithexpr ] ID [ arithexpr : arithexpr ]
+    (34) wiredec -> . wiretype idassigns
+    (42) assign -> . ASSIGN lhs = wireexpr
+    (43) always -> . ALWAYS @ sensitivity alwayscontblock
+    (44) always -> . ALWAYSFF @ sensitivity alwayscontblock
+    (45) always -> . ALWAYSCOMB alwayscontblock
+    (97) moduleinst -> . ID ID ( modportassign )
+    (103) empty -> .
+    (39) wiretype -> . WIRE
+    (40) wiretype -> . REG
+    (41) wiretype -> . LOGIC
 
-    ASSIGN          shift and go to state 27
-    ALWAYS          shift and go to state 28
-    ALWAYSFF        shift and go to state 29
-    ALWAYSCOMB      shift and go to state 30
-    ENDMODULE       reduce using rule 84 (empty -> .)
-    WIRE            shift and go to state 31
-    REG             shift and go to state 32
-    LOGIC           shift and go to state 33
+    ASSIGN          shift and go to state 29
+    ALWAYS          shift and go to state 30
+    ALWAYSFF        shift and go to state 31
+    ALWAYSCOMB      shift and go to state 32
+    ID              shift and go to state 21
+    ENDMODULE       reduce using rule 103 (empty -> .)
+    WIRE            shift and go to state 33
+    REG             shift and go to state 34
+    LOGIC           shift and go to state 35
 
-    modulecontent                  shift and go to state 46
-    wiredec                        shift and go to state 22
-    assign                         shift and go to state 23
-    always                         shift and go to state 24
-    empty                          shift and go to state 25
-    wiretype                       shift and go to state 26
+    modulecontent                  shift and go to state 45
+    wiredec                        shift and go to state 23
+    assign                         shift and go to state 24
+    always                         shift and go to state 25
+    moduleinst                     shift and go to state 26
+    empty                          shift and go to state 27
+    wiretype                       shift and go to state 28
 
 state 21
+
+    (97) moduleinst -> ID . ID ( modportassign )
+
+    ID              shift and go to state 46
+
+
+state 22
 
     (4) moduledec -> MODULE ID portdec ; modulecontent . ENDMODULE
 
     ENDMODULE       shift and go to state 47
 
 
-state 22
+state 23
 
-    (23) modulecontent -> wiredec . ; modulecontent
+    (27) modulecontent -> wiredec . ; modulecontent
 
     ;               shift and go to state 48
 
 
-state 23
+state 24
 
-    (24) modulecontent -> assign . ; modulecontent
+    (28) modulecontent -> assign . ; modulecontent
 
     ;               shift and go to state 49
 
 
-state 24
-
-    (25) modulecontent -> always . modulecontent
-    (23) modulecontent -> . wiredec ; modulecontent
-    (24) modulecontent -> . assign ; modulecontent
-    (25) modulecontent -> . always modulecontent
-    (26) modulecontent -> . empty
-    (27) wiredec -> . wiretype [ arithexpr : arithexpr ] ID
-    (28) wiredec -> . wiretype ID
-    (32) assign -> . ASSIGN lhs = wireexpr
-    (33) always -> . ALWAYS @ sensitivity alwayscontblock
-    (34) always -> . ALWAYSFF @ sensitivity alwayscontblock
-    (35) always -> . ALWAYSCOMB alwayscontblock
-    (84) empty -> .
-    (29) wiretype -> . WIRE
-    (30) wiretype -> . REG
-    (31) wiretype -> . LOGIC
-
-    ASSIGN          shift and go to state 27
-    ALWAYS          shift and go to state 28
-    ALWAYSFF        shift and go to state 29
-    ALWAYSCOMB      shift and go to state 30
-    ENDMODULE       reduce using rule 84 (empty -> .)
-    WIRE            shift and go to state 31
-    REG             shift and go to state 32
-    LOGIC           shift and go to state 33
-
-    always                         shift and go to state 24
-    modulecontent                  shift and go to state 50
-    wiredec                        shift and go to state 22
-    assign                         shift and go to state 23
-    empty                          shift and go to state 25
-    wiretype                       shift and go to state 26
-
 state 25
 
-    (26) modulecontent -> empty .
+    (29) modulecontent -> always . modulecontent
+    (27) modulecontent -> . wiredec ; modulecontent
+    (28) modulecontent -> . assign ; modulecontent
+    (29) modulecontent -> . always modulecontent
+    (30) modulecontent -> . moduleinst ; modulecontent
+    (31) modulecontent -> . empty
+    (32) wiredec -> . wiretype [ arithexpr : arithexpr ] idassigns
+    (33) wiredec -> . wiretype [ arithexpr : arithexpr ] ID [ arithexpr : arithexpr ]
+    (34) wiredec -> . wiretype idassigns
+    (42) assign -> . ASSIGN lhs = wireexpr
+    (43) always -> . ALWAYS @ sensitivity alwayscontblock
+    (44) always -> . ALWAYSFF @ sensitivity alwayscontblock
+    (45) always -> . ALWAYSCOMB alwayscontblock
+    (97) moduleinst -> . ID ID ( modportassign )
+    (103) empty -> .
+    (39) wiretype -> . WIRE
+    (40) wiretype -> . REG
+    (41) wiretype -> . LOGIC
 
-    ENDMODULE       reduce using rule 26 (modulecontent -> empty .)
+    ASSIGN          shift and go to state 29
+    ALWAYS          shift and go to state 30
+    ALWAYSFF        shift and go to state 31
+    ALWAYSCOMB      shift and go to state 32
+    ID              shift and go to state 21
+    ENDMODULE       reduce using rule 103 (empty -> .)
+    WIRE            shift and go to state 33
+    REG             shift and go to state 34
+    LOGIC           shift and go to state 35
 
+    always                         shift and go to state 25
+    modulecontent                  shift and go to state 50
+    wiredec                        shift and go to state 23
+    assign                         shift and go to state 24
+    moduleinst                     shift and go to state 26
+    empty                          shift and go to state 27
+    wiretype                       shift and go to state 28
 
 state 26
 
-    (27) wiredec -> wiretype . [ arithexpr : arithexpr ] ID
-    (28) wiredec -> wiretype . ID
+    (30) modulecontent -> moduleinst . ; modulecontent
 
-    [               shift and go to state 51
-    ID              shift and go to state 52
+    ;               shift and go to state 51
 
 
 state 27
 
-    (32) assign -> ASSIGN . lhs = wireexpr
-    (50) lhs -> . ID
-    (51) lhs -> . ID [ arithexpr : arithexpr ]
-    (52) lhs -> . { lhsconcat }
+    (31) modulecontent -> empty .
 
-    ID              shift and go to state 54
-    {               shift and go to state 55
+    ENDMODULE       reduce using rule 31 (modulecontent -> empty .)
 
-    lhs                            shift and go to state 53
 
 state 28
 
-    (33) always -> ALWAYS . @ sensitivity alwayscontblock
+    (32) wiredec -> wiretype . [ arithexpr : arithexpr ] idassigns
+    (33) wiredec -> wiretype . [ arithexpr : arithexpr ] ID [ arithexpr : arithexpr ]
+    (34) wiredec -> wiretype . idassigns
+    (35) idassigns -> . oneidassign
+    (36) idassigns -> . oneidassign , idassigns
+    (37) oneidassign -> . ID
+    (38) oneidassign -> . ID = wireexpr
 
-    @               shift and go to state 56
+    [               shift and go to state 52
+    ID              shift and go to state 54
 
+    idassigns                      shift and go to state 53
+    oneidassign                    shift and go to state 55
 
 state 29
 
-    (34) always -> ALWAYSFF . @ sensitivity alwayscontblock
+    (42) assign -> ASSIGN . lhs = wireexpr
+    (60) lhs -> . ID
+    (61) lhs -> . ID [ arithexpr : arithexpr ]
+    (62) lhs -> . { lhsconcat }
 
-    @               shift and go to state 57
+    ID              shift and go to state 57
+    {               shift and go to state 58
 
+    lhs                            shift and go to state 56
 
 state 30
 
-    (35) always -> ALWAYSCOMB . alwayscontblock
-    (39) alwayscontblock -> . BEGIN alwayscont END
+    (43) always -> ALWAYS . @ sensitivity alwayscontblock
 
-    BEGIN           shift and go to state 59
+    @               shift and go to state 59
 
-    alwayscontblock                shift and go to state 58
 
 state 31
 
-    (29) wiretype -> WIRE .
+    (44) always -> ALWAYSFF . @ sensitivity alwayscontblock
 
-    [               reduce using rule 29 (wiretype -> WIRE .)
-    ID              reduce using rule 29 (wiretype -> WIRE .)
+    @               shift and go to state 60
 
 
 state 32
 
-    (30) wiretype -> REG .
+    (45) always -> ALWAYSCOMB . alwayscontblock
+    (49) alwayscontblock -> . BEGIN alwayscont END
 
-    [               reduce using rule 30 (wiretype -> REG .)
-    ID              reduce using rule 30 (wiretype -> REG .)
+    BEGIN           shift and go to state 62
 
+    alwayscontblock                shift and go to state 61
 
 state 33
 
-    (31) wiretype -> LOGIC .
+    (39) wiretype -> WIRE .
 
-    [               reduce using rule 31 (wiretype -> LOGIC .)
-    ID              reduce using rule 31 (wiretype -> LOGIC .)
+    [               reduce using rule 39 (wiretype -> WIRE .)
+    ID              reduce using rule 39 (wiretype -> WIRE .)
+    ;               reduce using rule 39 (wiretype -> WIRE .)
 
 
 state 34
 
-    (5) paramdec -> # ( params . )
+    (40) wiretype -> REG .
 
-    )               shift and go to state 60
+    [               reduce using rule 40 (wiretype -> REG .)
+    ID              reduce using rule 40 (wiretype -> REG .)
+    ;               reduce using rule 40 (wiretype -> REG .)
 
 
 state 35
 
+    (41) wiretype -> LOGIC .
+
+    [               reduce using rule 41 (wiretype -> LOGIC .)
+    ID              reduce using rule 41 (wiretype -> LOGIC .)
+    ;               reduce using rule 41 (wiretype -> LOGIC .)
+
+
+state 36
+
+    (5) paramdec -> # ( params . )
+
+    )               shift and go to state 63
+
+
+state 37
+
     (6) params -> oneparam . paramplus
     (8) paramplus -> . , oneparam paramplus
     (9) paramplus -> . empty
-    (84) empty -> .
+    (103) empty -> .
 
-    ,               shift and go to state 62
-    )               reduce using rule 84 (empty -> .)
+    ,               shift and go to state 65
+    )               reduce using rule 103 (empty -> .)
 
-    paramplus                      shift and go to state 61
-    empty                          shift and go to state 63
+    paramplus                      shift and go to state 64
+    empty                          shift and go to state 66
 
-state 36
+state 38
 
     (7) params -> empty .
 
     )               reduce using rule 7 (params -> empty .)
 
 
-state 37
+state 39
 
     (10) oneparam -> PARAMETER . ID = arithexpr
 
-    ID              shift and go to state 64
-
-
-state 38
-
-    (12) portdec -> ( ports ) .
-
-    ;               reduce using rule 12 (portdec -> ( ports ) .)
-
-
-state 39
-
-    (13) ports -> oneport portplus .
-
-    )               reduce using rule 13 (ports -> oneport portplus .)
+    ID              shift and go to state 67
 
 
 state 40
 
-    (15) portplus -> , . oneport portplus
-    (17) oneport -> . inouttype ID
-    (18) oneport -> . inouttype [ arithexpr : arithexpr ] ID
-    (19) inouttype -> . INPUT
-    (20) inouttype -> . OUTPUT
-    (21) inouttype -> . INPUT wiretype
-    (22) inouttype -> . OUTPUT wiretype
+    (13) ports -> porttype portplus .
 
-    INPUT           shift and go to state 18
-    OUTPUT          shift and go to state 19
+    ;               reduce using rule 13 (ports -> porttype portplus .)
 
-    oneport                        shift and go to state 65
-    inouttype                      shift and go to state 17
 
 state 41
 
-    (16) portplus -> empty .
+    (15) portplus -> wireslice . idsterminal portplus
+    (17) idsterminal -> . ID portterminal
+    (18) idsterminal -> . ID , idsterminal
 
-    )               reduce using rule 16 (portplus -> empty .)
+    ID              shift and go to state 69
 
+    idsterminal                    shift and go to state 68
 
 state 42
 
-    (17) oneport -> inouttype ID .
+    (16) portplus -> empty .
+    (22) wireslice -> empty .
 
-    ,               reduce using rule 17 (oneport -> inouttype ID .)
-    )               reduce using rule 17 (oneport -> inouttype ID .)
+    ;               reduce using rule 16 (portplus -> empty .)
+    ID              reduce using rule 22 (wireslice -> empty .)
 
 
 state 43
 
-    (18) oneport -> inouttype [ . arithexpr : arithexpr ] ID
+    (21) wireslice -> [ . arithexpr : arithexpr ]
     (11) arithexpr -> . NUMBER
 
-    NUMBER          shift and go to state 67
+    NUMBER          shift and go to state 71
 
-    arithexpr                      shift and go to state 66
+    arithexpr                      shift and go to state 70
 
 state 44
 
-    (21) inouttype -> INPUT wiretype .
+    (24) porttype -> inout wiretype .
 
-    ID              reduce using rule 21 (inouttype -> INPUT wiretype .)
-    [               reduce using rule 21 (inouttype -> INPUT wiretype .)
+    [               reduce using rule 24 (porttype -> inout wiretype .)
+    ID              reduce using rule 24 (porttype -> inout wiretype .)
+    ;               reduce using rule 24 (porttype -> inout wiretype .)
 
 
 state 45
 
-    (22) inouttype -> OUTPUT wiretype .
+    (3) moduledec -> MODULE ID paramdec portdec ; modulecontent . ENDMODULE
 
-    ID              reduce using rule 22 (inouttype -> OUTPUT wiretype .)
-    [               reduce using rule 22 (inouttype -> OUTPUT wiretype .)
+    ENDMODULE       shift and go to state 72
 
 
 state 46
 
-    (3) moduledec -> MODULE ID paramdec portdec ; modulecontent . ENDMODULE
+    (97) moduleinst -> ID ID . ( modportassign )
 
-    ENDMODULE       shift and go to state 68
+    (               shift and go to state 73
 
 
 state 47
@@ -714,255 +760,357 @@ state 47
 
 state 48
 
-    (23) modulecontent -> wiredec ; . modulecontent
-    (23) modulecontent -> . wiredec ; modulecontent
-    (24) modulecontent -> . assign ; modulecontent
-    (25) modulecontent -> . always modulecontent
-    (26) modulecontent -> . empty
-    (27) wiredec -> . wiretype [ arithexpr : arithexpr ] ID
-    (28) wiredec -> . wiretype ID
-    (32) assign -> . ASSIGN lhs = wireexpr
-    (33) always -> . ALWAYS @ sensitivity alwayscontblock
-    (34) always -> . ALWAYSFF @ sensitivity alwayscontblock
-    (35) always -> . ALWAYSCOMB alwayscontblock
-    (84) empty -> .
-    (29) wiretype -> . WIRE
-    (30) wiretype -> . REG
-    (31) wiretype -> . LOGIC
+    (27) modulecontent -> wiredec ; . modulecontent
+    (27) modulecontent -> . wiredec ; modulecontent
+    (28) modulecontent -> . assign ; modulecontent
+    (29) modulecontent -> . always modulecontent
+    (30) modulecontent -> . moduleinst ; modulecontent
+    (31) modulecontent -> . empty
+    (32) wiredec -> . wiretype [ arithexpr : arithexpr ] idassigns
+    (33) wiredec -> . wiretype [ arithexpr : arithexpr ] ID [ arithexpr : arithexpr ]
+    (34) wiredec -> . wiretype idassigns
+    (42) assign -> . ASSIGN lhs = wireexpr
+    (43) always -> . ALWAYS @ sensitivity alwayscontblock
+    (44) always -> . ALWAYSFF @ sensitivity alwayscontblock
+    (45) always -> . ALWAYSCOMB alwayscontblock
+    (97) moduleinst -> . ID ID ( modportassign )
+    (103) empty -> .
+    (39) wiretype -> . WIRE
+    (40) wiretype -> . REG
+    (41) wiretype -> . LOGIC
 
-    ASSIGN          shift and go to state 27
-    ALWAYS          shift and go to state 28
-    ALWAYSFF        shift and go to state 29
-    ALWAYSCOMB      shift and go to state 30
-    ENDMODULE       reduce using rule 84 (empty -> .)
-    WIRE            shift and go to state 31
-    REG             shift and go to state 32
-    LOGIC           shift and go to state 33
+    ASSIGN          shift and go to state 29
+    ALWAYS          shift and go to state 30
+    ALWAYSFF        shift and go to state 31
+    ALWAYSCOMB      shift and go to state 32
+    ID              shift and go to state 21
+    ENDMODULE       reduce using rule 103 (empty -> .)
+    WIRE            shift and go to state 33
+    REG             shift and go to state 34
+    LOGIC           shift and go to state 35
 
-    wiredec                        shift and go to state 22
-    modulecontent                  shift and go to state 69
-    assign                         shift and go to state 23
-    always                         shift and go to state 24
-    empty                          shift and go to state 25
-    wiretype                       shift and go to state 26
+    wiredec                        shift and go to state 23
+    modulecontent                  shift and go to state 74
+    assign                         shift and go to state 24
+    always                         shift and go to state 25
+    moduleinst                     shift and go to state 26
+    empty                          shift and go to state 27
+    wiretype                       shift and go to state 28
 
 state 49
 
-    (24) modulecontent -> assign ; . modulecontent
-    (23) modulecontent -> . wiredec ; modulecontent
-    (24) modulecontent -> . assign ; modulecontent
-    (25) modulecontent -> . always modulecontent
-    (26) modulecontent -> . empty
-    (27) wiredec -> . wiretype [ arithexpr : arithexpr ] ID
-    (28) wiredec -> . wiretype ID
-    (32) assign -> . ASSIGN lhs = wireexpr
-    (33) always -> . ALWAYS @ sensitivity alwayscontblock
-    (34) always -> . ALWAYSFF @ sensitivity alwayscontblock
-    (35) always -> . ALWAYSCOMB alwayscontblock
-    (84) empty -> .
-    (29) wiretype -> . WIRE
-    (30) wiretype -> . REG
-    (31) wiretype -> . LOGIC
+    (28) modulecontent -> assign ; . modulecontent
+    (27) modulecontent -> . wiredec ; modulecontent
+    (28) modulecontent -> . assign ; modulecontent
+    (29) modulecontent -> . always modulecontent
+    (30) modulecontent -> . moduleinst ; modulecontent
+    (31) modulecontent -> . empty
+    (32) wiredec -> . wiretype [ arithexpr : arithexpr ] idassigns
+    (33) wiredec -> . wiretype [ arithexpr : arithexpr ] ID [ arithexpr : arithexpr ]
+    (34) wiredec -> . wiretype idassigns
+    (42) assign -> . ASSIGN lhs = wireexpr
+    (43) always -> . ALWAYS @ sensitivity alwayscontblock
+    (44) always -> . ALWAYSFF @ sensitivity alwayscontblock
+    (45) always -> . ALWAYSCOMB alwayscontblock
+    (97) moduleinst -> . ID ID ( modportassign )
+    (103) empty -> .
+    (39) wiretype -> . WIRE
+    (40) wiretype -> . REG
+    (41) wiretype -> . LOGIC
 
-    ASSIGN          shift and go to state 27
-    ALWAYS          shift and go to state 28
-    ALWAYSFF        shift and go to state 29
-    ALWAYSCOMB      shift and go to state 30
-    ENDMODULE       reduce using rule 84 (empty -> .)
-    WIRE            shift and go to state 31
-    REG             shift and go to state 32
-    LOGIC           shift and go to state 33
+    ASSIGN          shift and go to state 29
+    ALWAYS          shift and go to state 30
+    ALWAYSFF        shift and go to state 31
+    ALWAYSCOMB      shift and go to state 32
+    ID              shift and go to state 21
+    ENDMODULE       reduce using rule 103 (empty -> .)
+    WIRE            shift and go to state 33
+    REG             shift and go to state 34
+    LOGIC           shift and go to state 35
 
-    assign                         shift and go to state 23
-    modulecontent                  shift and go to state 70
-    wiredec                        shift and go to state 22
-    always                         shift and go to state 24
-    empty                          shift and go to state 25
-    wiretype                       shift and go to state 26
+    assign                         shift and go to state 24
+    modulecontent                  shift and go to state 75
+    wiredec                        shift and go to state 23
+    always                         shift and go to state 25
+    moduleinst                     shift and go to state 26
+    empty                          shift and go to state 27
+    wiretype                       shift and go to state 28
 
 state 50
 
-    (25) modulecontent -> always modulecontent .
+    (29) modulecontent -> always modulecontent .
 
-    ENDMODULE       reduce using rule 25 (modulecontent -> always modulecontent .)
+    ENDMODULE       reduce using rule 29 (modulecontent -> always modulecontent .)
 
 
 state 51
 
-    (27) wiredec -> wiretype [ . arithexpr : arithexpr ] ID
-    (11) arithexpr -> . NUMBER
+    (30) modulecontent -> moduleinst ; . modulecontent
+    (27) modulecontent -> . wiredec ; modulecontent
+    (28) modulecontent -> . assign ; modulecontent
+    (29) modulecontent -> . always modulecontent
+    (30) modulecontent -> . moduleinst ; modulecontent
+    (31) modulecontent -> . empty
+    (32) wiredec -> . wiretype [ arithexpr : arithexpr ] idassigns
+    (33) wiredec -> . wiretype [ arithexpr : arithexpr ] ID [ arithexpr : arithexpr ]
+    (34) wiredec -> . wiretype idassigns
+    (42) assign -> . ASSIGN lhs = wireexpr
+    (43) always -> . ALWAYS @ sensitivity alwayscontblock
+    (44) always -> . ALWAYSFF @ sensitivity alwayscontblock
+    (45) always -> . ALWAYSCOMB alwayscontblock
+    (97) moduleinst -> . ID ID ( modportassign )
+    (103) empty -> .
+    (39) wiretype -> . WIRE
+    (40) wiretype -> . REG
+    (41) wiretype -> . LOGIC
 
-    NUMBER          shift and go to state 67
+    ASSIGN          shift and go to state 29
+    ALWAYS          shift and go to state 30
+    ALWAYSFF        shift and go to state 31
+    ALWAYSCOMB      shift and go to state 32
+    ID              shift and go to state 21
+    ENDMODULE       reduce using rule 103 (empty -> .)
+    WIRE            shift and go to state 33
+    REG             shift and go to state 34
+    LOGIC           shift and go to state 35
 
-    arithexpr                      shift and go to state 71
+    moduleinst                     shift and go to state 26
+    modulecontent                  shift and go to state 76
+    wiredec                        shift and go to state 23
+    assign                         shift and go to state 24
+    always                         shift and go to state 25
+    empty                          shift and go to state 27
+    wiretype                       shift and go to state 28
 
 state 52
 
-    (28) wiredec -> wiretype ID .
+    (32) wiredec -> wiretype [ . arithexpr : arithexpr ] idassigns
+    (33) wiredec -> wiretype [ . arithexpr : arithexpr ] ID [ arithexpr : arithexpr ]
+    (11) arithexpr -> . NUMBER
 
-    ;               reduce using rule 28 (wiredec -> wiretype ID .)
+    NUMBER          shift and go to state 71
 
+    arithexpr                      shift and go to state 77
 
 state 53
 
-    (32) assign -> ASSIGN lhs . = wireexpr
+    (34) wiredec -> wiretype idassigns .
 
-    =               shift and go to state 72
+    ;               reduce using rule 34 (wiredec -> wiretype idassigns .)
 
 
 state 54
 
-    (50) lhs -> ID .
-    (51) lhs -> ID . [ arithexpr : arithexpr ]
+    (37) oneidassign -> ID .
+    (38) oneidassign -> ID . = wireexpr
 
-    =               reduce using rule 50 (lhs -> ID .)
-    ,               reduce using rule 50 (lhs -> ID .)
-    }               reduce using rule 50 (lhs -> ID .)
-    NONBLOCK        reduce using rule 50 (lhs -> ID .)
-    [               shift and go to state 73
+    ,               reduce using rule 37 (oneidassign -> ID .)
+    ;               reduce using rule 37 (oneidassign -> ID .)
+    =               shift and go to state 78
 
 
 state 55
 
-    (52) lhs -> { . lhsconcat }
-    (53) lhsconcat -> . lhs
-    (54) lhsconcat -> . lhs , lhsconcat
-    (50) lhs -> . ID
-    (51) lhs -> . ID [ arithexpr : arithexpr ]
-    (52) lhs -> . { lhsconcat }
+    (35) idassigns -> oneidassign .
+    (36) idassigns -> oneidassign . , idassigns
 
-    ID              shift and go to state 54
-    {               shift and go to state 55
+    ;               reduce using rule 35 (idassigns -> oneidassign .)
+    ,               shift and go to state 79
 
-    lhsconcat                      shift and go to state 74
-    lhs                            shift and go to state 75
 
 state 56
 
-    (33) always -> ALWAYS @ . sensitivity alwayscontblock
-    (36) sensitivity -> . ( edge ID )
+    (42) assign -> ASSIGN lhs . = wireexpr
 
-    (               shift and go to state 77
+    =               shift and go to state 80
 
-    sensitivity                    shift and go to state 76
 
 state 57
 
-    (34) always -> ALWAYSFF @ . sensitivity alwayscontblock
-    (36) sensitivity -> . ( edge ID )
+    (60) lhs -> ID .
+    (61) lhs -> ID . [ arithexpr : arithexpr ]
 
-    (               shift and go to state 77
+    =               reduce using rule 60 (lhs -> ID .)
+    ,               reduce using rule 60 (lhs -> ID .)
+    }               reduce using rule 60 (lhs -> ID .)
+    NONBLOCK        reduce using rule 60 (lhs -> ID .)
+    [               shift and go to state 81
 
-    sensitivity                    shift and go to state 78
 
 state 58
 
-    (35) always -> ALWAYSCOMB alwayscontblock .
+    (62) lhs -> { . lhsconcat }
+    (63) lhsconcat -> . lhs
+    (64) lhsconcat -> . lhs , lhsconcat
+    (60) lhs -> . ID
+    (61) lhs -> . ID [ arithexpr : arithexpr ]
+    (62) lhs -> . { lhsconcat }
 
-    ASSIGN          reduce using rule 35 (always -> ALWAYSCOMB alwayscontblock .)
-    ALWAYS          reduce using rule 35 (always -> ALWAYSCOMB alwayscontblock .)
-    ALWAYSFF        reduce using rule 35 (always -> ALWAYSCOMB alwayscontblock .)
-    ALWAYSCOMB      reduce using rule 35 (always -> ALWAYSCOMB alwayscontblock .)
-    WIRE            reduce using rule 35 (always -> ALWAYSCOMB alwayscontblock .)
-    REG             reduce using rule 35 (always -> ALWAYSCOMB alwayscontblock .)
-    LOGIC           reduce using rule 35 (always -> ALWAYSCOMB alwayscontblock .)
-    ENDMODULE       reduce using rule 35 (always -> ALWAYSCOMB alwayscontblock .)
+    ID              shift and go to state 57
+    {               shift and go to state 58
 
+    lhsconcat                      shift and go to state 82
+    lhs                            shift and go to state 83
 
 state 59
 
-    (39) alwayscontblock -> BEGIN . alwayscont END
-    (40) alwayscont -> . oneassign ; alwayscont
-    (41) alwayscont -> . ifblock alwayscont
-    (42) alwayscont -> . ifblock elseblock alwayscont
-    (43) alwayscont -> . empty
-    (44) oneassign -> . lhs = wireexpr
-    (45) oneassign -> . lhs NONBLOCK wireexpr
-    (46) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
-    (84) empty -> .
-    (50) lhs -> . ID
-    (51) lhs -> . ID [ arithexpr : arithexpr ]
-    (52) lhs -> . { lhsconcat }
+    (43) always -> ALWAYS @ . sensitivity alwayscontblock
+    (46) sensitivity -> . ( edge ID )
 
-    IF              shift and go to state 84
-    END             reduce using rule 84 (empty -> .)
-    ID              shift and go to state 54
-    {               shift and go to state 55
+    (               shift and go to state 85
 
-    alwayscont                     shift and go to state 79
-    oneassign                      shift and go to state 80
-    ifblock                        shift and go to state 81
-    empty                          shift and go to state 82
-    lhs                            shift and go to state 83
+    sensitivity                    shift and go to state 84
 
 state 60
+
+    (44) always -> ALWAYSFF @ . sensitivity alwayscontblock
+    (46) sensitivity -> . ( edge ID )
+
+    (               shift and go to state 85
+
+    sensitivity                    shift and go to state 86
+
+state 61
+
+    (45) always -> ALWAYSCOMB alwayscontblock .
+
+    ASSIGN          reduce using rule 45 (always -> ALWAYSCOMB alwayscontblock .)
+    ALWAYS          reduce using rule 45 (always -> ALWAYSCOMB alwayscontblock .)
+    ALWAYSFF        reduce using rule 45 (always -> ALWAYSCOMB alwayscontblock .)
+    ALWAYSCOMB      reduce using rule 45 (always -> ALWAYSCOMB alwayscontblock .)
+    ID              reduce using rule 45 (always -> ALWAYSCOMB alwayscontblock .)
+    WIRE            reduce using rule 45 (always -> ALWAYSCOMB alwayscontblock .)
+    REG             reduce using rule 45 (always -> ALWAYSCOMB alwayscontblock .)
+    LOGIC           reduce using rule 45 (always -> ALWAYSCOMB alwayscontblock .)
+    ENDMODULE       reduce using rule 45 (always -> ALWAYSCOMB alwayscontblock .)
+
+
+state 62
+
+    (49) alwayscontblock -> BEGIN . alwayscont END
+    (50) alwayscont -> . oneassign ; alwayscont
+    (51) alwayscont -> . ifblock alwayscont
+    (52) alwayscont -> . ifblock elseblock alwayscont
+    (53) alwayscont -> . empty
+    (54) oneassign -> . lhs = wireexpr
+    (55) oneassign -> . lhs NONBLOCK wireexpr
+    (56) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
+    (103) empty -> .
+    (60) lhs -> . ID
+    (61) lhs -> . ID [ arithexpr : arithexpr ]
+    (62) lhs -> . { lhsconcat }
+
+    IF              shift and go to state 92
+    END             reduce using rule 103 (empty -> .)
+    ID              shift and go to state 57
+    {               shift and go to state 58
+
+    alwayscont                     shift and go to state 87
+    oneassign                      shift and go to state 88
+    ifblock                        shift and go to state 89
+    empty                          shift and go to state 90
+    lhs                            shift and go to state 91
+
+state 63
 
     (5) paramdec -> # ( params ) .
 
     (               reduce using rule 5 (paramdec -> # ( params ) .)
 
 
-state 61
+state 64
 
     (6) params -> oneparam paramplus .
 
     )               reduce using rule 6 (params -> oneparam paramplus .)
 
 
-state 62
+state 65
 
     (8) paramplus -> , . oneparam paramplus
     (10) oneparam -> . PARAMETER ID = arithexpr
 
-    PARAMETER       shift and go to state 37
+    PARAMETER       shift and go to state 39
 
-    oneparam                       shift and go to state 85
+    oneparam                       shift and go to state 93
 
-state 63
+state 66
 
     (9) paramplus -> empty .
 
     )               reduce using rule 9 (paramplus -> empty .)
 
 
-state 64
+state 67
 
     (10) oneparam -> PARAMETER ID . = arithexpr
 
-    =               shift and go to state 86
+    =               shift and go to state 94
 
 
-state 65
+state 68
 
-    (15) portplus -> , oneport . portplus
-    (15) portplus -> . , oneport portplus
+    (15) portplus -> wireslice idsterminal . portplus
+    (15) portplus -> . wireslice idsterminal portplus
     (16) portplus -> . empty
-    (84) empty -> .
+    (21) wireslice -> . [ arithexpr : arithexpr ]
+    (22) wireslice -> . empty
+    (103) empty -> .
 
-    ,               shift and go to state 40
-    )               reduce using rule 84 (empty -> .)
+    [               shift and go to state 43
+    ;               reduce using rule 103 (empty -> .)
+    ID              reduce using rule 103 (empty -> .)
 
-    portplus                       shift and go to state 87
-    empty                          shift and go to state 41
+    wireslice                      shift and go to state 41
+    portplus                       shift and go to state 95
+    empty                          shift and go to state 42
 
-state 66
+state 69
 
-    (18) oneport -> inouttype [ arithexpr . : arithexpr ] ID
+    (17) idsterminal -> ID . portterminal
+    (18) idsterminal -> ID . , idsterminal
+    (19) portterminal -> . )
+    (20) portterminal -> . , porttype
 
-    :               shift and go to state 88
+    ,               shift and go to state 97
+    )               shift and go to state 98
+
+    portterminal                   shift and go to state 96
+
+state 70
+
+    (21) wireslice -> [ arithexpr . : arithexpr ]
+
+    :               shift and go to state 99
 
 
-state 67
+state 71
 
     (11) arithexpr -> NUMBER .
 
     :               reduce using rule 11 (arithexpr -> NUMBER .)
+    ?               reduce using rule 11 (arithexpr -> NUMBER .)
+    +               reduce using rule 11 (arithexpr -> NUMBER .)
+    -               reduce using rule 11 (arithexpr -> NUMBER .)
+    *               reduce using rule 11 (arithexpr -> NUMBER .)
+    &               reduce using rule 11 (arithexpr -> NUMBER .)
+    |               reduce using rule 11 (arithexpr -> NUMBER .)
+    ^               reduce using rule 11 (arithexpr -> NUMBER .)
+    <               reduce using rule 11 (arithexpr -> NUMBER .)
+    >               reduce using rule 11 (arithexpr -> NUMBER .)
+    LSHIFT          reduce using rule 11 (arithexpr -> NUMBER .)
+    RSHIFT          reduce using rule 11 (arithexpr -> NUMBER .)
+    EQ              reduce using rule 11 (arithexpr -> NUMBER .)
+    GEQ             reduce using rule 11 (arithexpr -> NUMBER .)
+    LEQ             reduce using rule 11 (arithexpr -> NUMBER .)
     ,               reduce using rule 11 (arithexpr -> NUMBER .)
     )               reduce using rule 11 (arithexpr -> NUMBER .)
+    ;               reduce using rule 11 (arithexpr -> NUMBER .)
     ]               reduce using rule 11 (arithexpr -> NUMBER .)
+    }               reduce using rule 11 (arithexpr -> NUMBER .)
 
 
-state 68
+state 72
 
     (3) moduledec -> MODULE ID paramdec portdec ; modulecontent ENDMODULE .
 
@@ -970,818 +1118,1097 @@ state 68
     $end            reduce using rule 3 (moduledec -> MODULE ID paramdec portdec ; modulecontent ENDMODULE .)
 
 
-state 69
-
-    (23) modulecontent -> wiredec ; modulecontent .
-
-    ENDMODULE       reduce using rule 23 (modulecontent -> wiredec ; modulecontent .)
-
-
-state 70
-
-    (24) modulecontent -> assign ; modulecontent .
-
-    ENDMODULE       reduce using rule 24 (modulecontent -> assign ; modulecontent .)
-
-
-state 71
-
-    (27) wiredec -> wiretype [ arithexpr . : arithexpr ] ID
-
-    :               shift and go to state 89
-
-
-state 72
-
-    (32) assign -> ASSIGN lhs = . wireexpr
-    (55) wireexpr -> . wireval
-    (56) wireexpr -> . wireval wireop wireexpr
-    (57) wireexpr -> . wireval ? wireexpr : wireexpr
-    (58) wireval -> . ALLHIGH
-    (59) wireval -> . ALLLOW
-    (60) wireval -> . LITWIRE
-    (61) wireval -> . { wireconcat }
-    (62) wireval -> . ( wireexpr )
-    (63) wireval -> . ID [ arithexpr : arithexpr ]
-    (64) wireval -> . ID [ arithexpr ]
-    (65) wireval -> . unaop wireval
-    (70) wireval -> . ID
-    (66) unaop -> . ~
-    (67) unaop -> . &
-    (68) unaop -> . ^
-    (69) unaop -> . |
-
-    ALLHIGH         shift and go to state 92
-    ALLLOW          shift and go to state 93
-    LITWIRE         shift and go to state 94
-    {               shift and go to state 95
-    (               shift and go to state 96
-    ID              shift and go to state 97
-    ~               shift and go to state 99
-    &               shift and go to state 100
-    ^               shift and go to state 101
-    |               shift and go to state 102
-
-    wireexpr                       shift and go to state 90
-    wireval                        shift and go to state 91
-    unaop                          shift and go to state 98
-
 state 73
 
-    (51) lhs -> ID [ . arithexpr : arithexpr ]
+    (97) moduleinst -> ID ID ( . modportassign )
+    (98) modportassign -> . oneportassign
+    (99) modportassign -> . oneportassign , modportassign
+    (100) modportassign -> . empty
+    (101) oneportassign -> . wireexpr
+    (102) oneportassign -> . . ID ( wireexpr )
+    (103) empty -> .
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
     (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
 
-    NUMBER          shift and go to state 67
+    .               shift and go to state 106
+    )               reduce using rule 103 (empty -> .)
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
 
-    arithexpr                      shift and go to state 103
+    modportassign                  shift and go to state 102
+    oneportassign                  shift and go to state 103
+    empty                          shift and go to state 104
+    wireexpr                       shift and go to state 105
+    wireval                        shift and go to state 107
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
 
 state 74
 
-    (52) lhs -> { lhsconcat . }
+    (27) modulecontent -> wiredec ; modulecontent .
 
-    }               shift and go to state 104
+    ENDMODULE       reduce using rule 27 (modulecontent -> wiredec ; modulecontent .)
 
 
 state 75
 
-    (53) lhsconcat -> lhs .
-    (54) lhsconcat -> lhs . , lhsconcat
+    (28) modulecontent -> assign ; modulecontent .
 
-    }               reduce using rule 53 (lhsconcat -> lhs .)
-    ,               shift and go to state 105
+    ENDMODULE       reduce using rule 28 (modulecontent -> assign ; modulecontent .)
 
 
 state 76
 
-    (33) always -> ALWAYS @ sensitivity . alwayscontblock
-    (39) alwayscontblock -> . BEGIN alwayscont END
+    (30) modulecontent -> moduleinst ; modulecontent .
 
-    BEGIN           shift and go to state 59
+    ENDMODULE       reduce using rule 30 (modulecontent -> moduleinst ; modulecontent .)
 
-    alwayscontblock                shift and go to state 106
 
 state 77
 
-    (36) sensitivity -> ( . edge ID )
-    (37) edge -> . POSEDGE
-    (38) edge -> . NEGEDGE
+    (32) wiredec -> wiretype [ arithexpr . : arithexpr ] idassigns
+    (33) wiredec -> wiretype [ arithexpr . : arithexpr ] ID [ arithexpr : arithexpr ]
 
-    POSEDGE         shift and go to state 108
-    NEGEDGE         shift and go to state 109
+    :               shift and go to state 118
 
-    edge                           shift and go to state 107
 
 state 78
 
-    (34) always -> ALWAYSFF @ sensitivity . alwayscontblock
-    (39) alwayscontblock -> . BEGIN alwayscont END
+    (38) oneidassign -> ID = . wireexpr
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
 
-    BEGIN           shift and go to state 59
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
 
-    alwayscontblock                shift and go to state 110
+    wireexpr                       shift and go to state 119
+    wireval                        shift and go to state 107
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
 
 state 79
 
-    (39) alwayscontblock -> BEGIN alwayscont . END
+    (36) idassigns -> oneidassign , . idassigns
+    (35) idassigns -> . oneidassign
+    (36) idassigns -> . oneidassign , idassigns
+    (37) oneidassign -> . ID
+    (38) oneidassign -> . ID = wireexpr
 
-    END             shift and go to state 111
+    ID              shift and go to state 54
 
+    oneidassign                    shift and go to state 55
+    idassigns                      shift and go to state 120
 
 state 80
 
-    (40) alwayscont -> oneassign . ; alwayscont
+    (42) assign -> ASSIGN lhs = . wireexpr
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
 
-    ;               shift and go to state 112
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
 
+    wireexpr                       shift and go to state 121
+    wireval                        shift and go to state 107
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
 
 state 81
 
-    (41) alwayscont -> ifblock . alwayscont
-    (42) alwayscont -> ifblock . elseblock alwayscont
-    (40) alwayscont -> . oneassign ; alwayscont
-    (41) alwayscont -> . ifblock alwayscont
-    (42) alwayscont -> . ifblock elseblock alwayscont
-    (43) alwayscont -> . empty
-    (47) elseblock -> . ELSE ifblock
-    (48) elseblock -> . ELSE ifblock elseblock
-    (49) elseblock -> . ELSE BEGIN alwayscont END
-    (44) oneassign -> . lhs = wireexpr
-    (45) oneassign -> . lhs NONBLOCK wireexpr
-    (46) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
-    (84) empty -> .
-    (50) lhs -> . ID
-    (51) lhs -> . ID [ arithexpr : arithexpr ]
-    (52) lhs -> . { lhsconcat }
+    (61) lhs -> ID [ . arithexpr : arithexpr ]
+    (11) arithexpr -> . NUMBER
 
-    ELSE            shift and go to state 115
-    IF              shift and go to state 84
-    END             reduce using rule 84 (empty -> .)
-    ID              shift and go to state 54
-    {               shift and go to state 55
+    NUMBER          shift and go to state 71
 
-    ifblock                        shift and go to state 81
-    alwayscont                     shift and go to state 113
-    elseblock                      shift and go to state 114
-    oneassign                      shift and go to state 80
-    empty                          shift and go to state 82
-    lhs                            shift and go to state 83
+    arithexpr                      shift and go to state 122
 
 state 82
 
-    (43) alwayscont -> empty .
+    (62) lhs -> { lhsconcat . }
 
-    END             reduce using rule 43 (alwayscont -> empty .)
+    }               shift and go to state 123
 
 
 state 83
 
-    (44) oneassign -> lhs . = wireexpr
-    (45) oneassign -> lhs . NONBLOCK wireexpr
+    (63) lhsconcat -> lhs .
+    (64) lhsconcat -> lhs . , lhsconcat
 
-    =               shift and go to state 116
-    NONBLOCK        shift and go to state 117
+    }               reduce using rule 63 (lhsconcat -> lhs .)
+    ,               shift and go to state 124
 
 
 state 84
 
-    (46) ifblock -> IF . ( wireexpr ) BEGIN alwayscont END
+    (43) always -> ALWAYS @ sensitivity . alwayscontblock
+    (49) alwayscontblock -> . BEGIN alwayscont END
 
-    (               shift and go to state 118
+    BEGIN           shift and go to state 62
 
+    alwayscontblock                shift and go to state 125
 
 state 85
 
-    (8) paramplus -> , oneparam . paramplus
-    (8) paramplus -> . , oneparam paramplus
-    (9) paramplus -> . empty
-    (84) empty -> .
+    (46) sensitivity -> ( . edge ID )
+    (47) edge -> . POSEDGE
+    (48) edge -> . NEGEDGE
 
-    ,               shift and go to state 62
-    )               reduce using rule 84 (empty -> .)
+    POSEDGE         shift and go to state 127
+    NEGEDGE         shift and go to state 128
 
-    paramplus                      shift and go to state 119
-    empty                          shift and go to state 63
+    edge                           shift and go to state 126
 
 state 86
 
-    (10) oneparam -> PARAMETER ID = . arithexpr
-    (11) arithexpr -> . NUMBER
+    (44) always -> ALWAYSFF @ sensitivity . alwayscontblock
+    (49) alwayscontblock -> . BEGIN alwayscont END
 
-    NUMBER          shift and go to state 67
+    BEGIN           shift and go to state 62
 
-    arithexpr                      shift and go to state 120
+    alwayscontblock                shift and go to state 129
 
 state 87
 
-    (15) portplus -> , oneport portplus .
+    (49) alwayscontblock -> BEGIN alwayscont . END
 
-    )               reduce using rule 15 (portplus -> , oneport portplus .)
+    END             shift and go to state 130
 
 
 state 88
 
-    (18) oneport -> inouttype [ arithexpr : . arithexpr ] ID
-    (11) arithexpr -> . NUMBER
+    (50) alwayscont -> oneassign . ; alwayscont
 
-    NUMBER          shift and go to state 67
+    ;               shift and go to state 131
 
-    arithexpr                      shift and go to state 121
 
 state 89
 
-    (27) wiredec -> wiretype [ arithexpr : . arithexpr ] ID
-    (11) arithexpr -> . NUMBER
+    (51) alwayscont -> ifblock . alwayscont
+    (52) alwayscont -> ifblock . elseblock alwayscont
+    (50) alwayscont -> . oneassign ; alwayscont
+    (51) alwayscont -> . ifblock alwayscont
+    (52) alwayscont -> . ifblock elseblock alwayscont
+    (53) alwayscont -> . empty
+    (57) elseblock -> . ELSE ifblock
+    (58) elseblock -> . ELSE ifblock elseblock
+    (59) elseblock -> . ELSE BEGIN alwayscont END
+    (54) oneassign -> . lhs = wireexpr
+    (55) oneassign -> . lhs NONBLOCK wireexpr
+    (56) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
+    (103) empty -> .
+    (60) lhs -> . ID
+    (61) lhs -> . ID [ arithexpr : arithexpr ]
+    (62) lhs -> . { lhsconcat }
 
-    NUMBER          shift and go to state 67
+    ELSE            shift and go to state 134
+    IF              shift and go to state 92
+    END             reduce using rule 103 (empty -> .)
+    ID              shift and go to state 57
+    {               shift and go to state 58
 
-    arithexpr                      shift and go to state 122
+    ifblock                        shift and go to state 89
+    alwayscont                     shift and go to state 132
+    elseblock                      shift and go to state 133
+    oneassign                      shift and go to state 88
+    empty                          shift and go to state 90
+    lhs                            shift and go to state 91
 
 state 90
 
-    (32) assign -> ASSIGN lhs = wireexpr .
+    (53) alwayscont -> empty .
 
-    ;               reduce using rule 32 (assign -> ASSIGN lhs = wireexpr .)
+    END             reduce using rule 53 (alwayscont -> empty .)
 
 
 state 91
 
-    (55) wireexpr -> wireval .
-    (56) wireexpr -> wireval . wireop wireexpr
-    (57) wireexpr -> wireval . ? wireexpr : wireexpr
-    (73) wireop -> . +
-    (74) wireop -> . -
-    (75) wireop -> . *
-    (76) wireop -> . &
-    (77) wireop -> . |
-    (78) wireop -> . ^
-    (79) wireop -> . <
-    (80) wireop -> . >
-    (81) wireop -> . EQ
-    (82) wireop -> . GEQ
-    (83) wireop -> . LEQ
+    (54) oneassign -> lhs . = wireexpr
+    (55) oneassign -> lhs . NONBLOCK wireexpr
 
-    ;               reduce using rule 55 (wireexpr -> wireval .)
-    ,               reduce using rule 55 (wireexpr -> wireval .)
-    }               reduce using rule 55 (wireexpr -> wireval .)
-    )               reduce using rule 55 (wireexpr -> wireval .)
-    :               reduce using rule 55 (wireexpr -> wireval .)
-    ?               shift and go to state 124
-    +               shift and go to state 125
-    -               shift and go to state 126
-    *               shift and go to state 127
-    &               shift and go to state 128
-    |               shift and go to state 129
-    ^               shift and go to state 130
-    <               shift and go to state 131
-    >               shift and go to state 132
-    EQ              shift and go to state 133
-    GEQ             shift and go to state 134
-    LEQ             shift and go to state 135
+    =               shift and go to state 135
+    NONBLOCK        shift and go to state 136
 
-    wireop                         shift and go to state 123
 
 state 92
 
-    (58) wireval -> ALLHIGH .
+    (56) ifblock -> IF . ( wireexpr ) BEGIN alwayscont END
 
-    ?               reduce using rule 58 (wireval -> ALLHIGH .)
-    +               reduce using rule 58 (wireval -> ALLHIGH .)
-    -               reduce using rule 58 (wireval -> ALLHIGH .)
-    *               reduce using rule 58 (wireval -> ALLHIGH .)
-    &               reduce using rule 58 (wireval -> ALLHIGH .)
-    |               reduce using rule 58 (wireval -> ALLHIGH .)
-    ^               reduce using rule 58 (wireval -> ALLHIGH .)
-    <               reduce using rule 58 (wireval -> ALLHIGH .)
-    >               reduce using rule 58 (wireval -> ALLHIGH .)
-    EQ              reduce using rule 58 (wireval -> ALLHIGH .)
-    GEQ             reduce using rule 58 (wireval -> ALLHIGH .)
-    LEQ             reduce using rule 58 (wireval -> ALLHIGH .)
-    ;               reduce using rule 58 (wireval -> ALLHIGH .)
-    ,               reduce using rule 58 (wireval -> ALLHIGH .)
-    }               reduce using rule 58 (wireval -> ALLHIGH .)
-    )               reduce using rule 58 (wireval -> ALLHIGH .)
-    :               reduce using rule 58 (wireval -> ALLHIGH .)
+    (               shift and go to state 137
 
 
 state 93
 
-    (59) wireval -> ALLLOW .
+    (8) paramplus -> , oneparam . paramplus
+    (8) paramplus -> . , oneparam paramplus
+    (9) paramplus -> . empty
+    (103) empty -> .
 
-    ?               reduce using rule 59 (wireval -> ALLLOW .)
-    +               reduce using rule 59 (wireval -> ALLLOW .)
-    -               reduce using rule 59 (wireval -> ALLLOW .)
-    *               reduce using rule 59 (wireval -> ALLLOW .)
-    &               reduce using rule 59 (wireval -> ALLLOW .)
-    |               reduce using rule 59 (wireval -> ALLLOW .)
-    ^               reduce using rule 59 (wireval -> ALLLOW .)
-    <               reduce using rule 59 (wireval -> ALLLOW .)
-    >               reduce using rule 59 (wireval -> ALLLOW .)
-    EQ              reduce using rule 59 (wireval -> ALLLOW .)
-    GEQ             reduce using rule 59 (wireval -> ALLLOW .)
-    LEQ             reduce using rule 59 (wireval -> ALLLOW .)
-    ;               reduce using rule 59 (wireval -> ALLLOW .)
-    ,               reduce using rule 59 (wireval -> ALLLOW .)
-    }               reduce using rule 59 (wireval -> ALLLOW .)
-    )               reduce using rule 59 (wireval -> ALLLOW .)
-    :               reduce using rule 59 (wireval -> ALLLOW .)
+    ,               shift and go to state 65
+    )               reduce using rule 103 (empty -> .)
 
+    paramplus                      shift and go to state 138
+    empty                          shift and go to state 66
 
 state 94
 
-    (60) wireval -> LITWIRE .
+    (10) oneparam -> PARAMETER ID = . arithexpr
+    (11) arithexpr -> . NUMBER
 
-    ?               reduce using rule 60 (wireval -> LITWIRE .)
-    +               reduce using rule 60 (wireval -> LITWIRE .)
-    -               reduce using rule 60 (wireval -> LITWIRE .)
-    *               reduce using rule 60 (wireval -> LITWIRE .)
-    &               reduce using rule 60 (wireval -> LITWIRE .)
-    |               reduce using rule 60 (wireval -> LITWIRE .)
-    ^               reduce using rule 60 (wireval -> LITWIRE .)
-    <               reduce using rule 60 (wireval -> LITWIRE .)
-    >               reduce using rule 60 (wireval -> LITWIRE .)
-    EQ              reduce using rule 60 (wireval -> LITWIRE .)
-    GEQ             reduce using rule 60 (wireval -> LITWIRE .)
-    LEQ             reduce using rule 60 (wireval -> LITWIRE .)
-    ;               reduce using rule 60 (wireval -> LITWIRE .)
-    ,               reduce using rule 60 (wireval -> LITWIRE .)
-    }               reduce using rule 60 (wireval -> LITWIRE .)
-    )               reduce using rule 60 (wireval -> LITWIRE .)
-    :               reduce using rule 60 (wireval -> LITWIRE .)
+    NUMBER          shift and go to state 71
 
+    arithexpr                      shift and go to state 139
 
 state 95
 
-    (61) wireval -> { . wireconcat }
-    (71) wireconcat -> . wireexpr
-    (72) wireconcat -> . wireexpr , wireconcat
-    (55) wireexpr -> . wireval
-    (56) wireexpr -> . wireval wireop wireexpr
-    (57) wireexpr -> . wireval ? wireexpr : wireexpr
-    (58) wireval -> . ALLHIGH
-    (59) wireval -> . ALLLOW
-    (60) wireval -> . LITWIRE
-    (61) wireval -> . { wireconcat }
-    (62) wireval -> . ( wireexpr )
-    (63) wireval -> . ID [ arithexpr : arithexpr ]
-    (64) wireval -> . ID [ arithexpr ]
-    (65) wireval -> . unaop wireval
-    (70) wireval -> . ID
-    (66) unaop -> . ~
-    (67) unaop -> . &
-    (68) unaop -> . ^
-    (69) unaop -> . |
+    (15) portplus -> wireslice idsterminal portplus .
 
-    ALLHIGH         shift and go to state 92
-    ALLLOW          shift and go to state 93
-    LITWIRE         shift and go to state 94
-    {               shift and go to state 95
-    (               shift and go to state 96
-    ID              shift and go to state 97
-    ~               shift and go to state 99
-    &               shift and go to state 100
-    ^               shift and go to state 101
-    |               shift and go to state 102
+    ;               reduce using rule 15 (portplus -> wireslice idsterminal portplus .)
 
-    wireconcat                     shift and go to state 136
-    wireexpr                       shift and go to state 137
-    wireval                        shift and go to state 91
-    unaop                          shift and go to state 98
 
 state 96
 
-    (62) wireval -> ( . wireexpr )
-    (55) wireexpr -> . wireval
-    (56) wireexpr -> . wireval wireop wireexpr
-    (57) wireexpr -> . wireval ? wireexpr : wireexpr
-    (58) wireval -> . ALLHIGH
-    (59) wireval -> . ALLLOW
-    (60) wireval -> . LITWIRE
-    (61) wireval -> . { wireconcat }
-    (62) wireval -> . ( wireexpr )
-    (63) wireval -> . ID [ arithexpr : arithexpr ]
-    (64) wireval -> . ID [ arithexpr ]
-    (65) wireval -> . unaop wireval
-    (70) wireval -> . ID
-    (66) unaop -> . ~
-    (67) unaop -> . &
-    (68) unaop -> . ^
-    (69) unaop -> . |
+    (17) idsterminal -> ID portterminal .
 
-    ALLHIGH         shift and go to state 92
-    ALLLOW          shift and go to state 93
-    LITWIRE         shift and go to state 94
-    {               shift and go to state 95
-    (               shift and go to state 96
-    ID              shift and go to state 97
-    ~               shift and go to state 99
-    &               shift and go to state 100
-    ^               shift and go to state 101
-    |               shift and go to state 102
+    [               reduce using rule 17 (idsterminal -> ID portterminal .)
+    ID              reduce using rule 17 (idsterminal -> ID portterminal .)
+    ;               reduce using rule 17 (idsterminal -> ID portterminal .)
 
-    wireexpr                       shift and go to state 138
-    wireval                        shift and go to state 91
-    unaop                          shift and go to state 98
 
 state 97
 
-    (63) wireval -> ID . [ arithexpr : arithexpr ]
-    (64) wireval -> ID . [ arithexpr ]
-    (70) wireval -> ID .
+    (18) idsterminal -> ID , . idsterminal
+    (20) portterminal -> , . porttype
+    (17) idsterminal -> . ID portterminal
+    (18) idsterminal -> . ID , idsterminal
+    (23) porttype -> . inout
+    (24) porttype -> . inout wiretype
+    (25) inout -> . INPUT
+    (26) inout -> . OUTPUT
 
-    [               shift and go to state 139
-    ?               reduce using rule 70 (wireval -> ID .)
-    +               reduce using rule 70 (wireval -> ID .)
-    -               reduce using rule 70 (wireval -> ID .)
-    *               reduce using rule 70 (wireval -> ID .)
-    &               reduce using rule 70 (wireval -> ID .)
-    |               reduce using rule 70 (wireval -> ID .)
-    ^               reduce using rule 70 (wireval -> ID .)
-    <               reduce using rule 70 (wireval -> ID .)
-    >               reduce using rule 70 (wireval -> ID .)
-    EQ              reduce using rule 70 (wireval -> ID .)
-    GEQ             reduce using rule 70 (wireval -> ID .)
-    LEQ             reduce using rule 70 (wireval -> ID .)
-    ;               reduce using rule 70 (wireval -> ID .)
-    ,               reduce using rule 70 (wireval -> ID .)
-    }               reduce using rule 70 (wireval -> ID .)
-    )               reduce using rule 70 (wireval -> ID .)
-    :               reduce using rule 70 (wireval -> ID .)
+    ID              shift and go to state 69
+    INPUT           shift and go to state 18
+    OUTPUT          shift and go to state 19
 
+    idsterminal                    shift and go to state 140
+    porttype                       shift and go to state 141
+    inout                          shift and go to state 17
 
 state 98
 
-    (65) wireval -> unaop . wireval
-    (58) wireval -> . ALLHIGH
-    (59) wireval -> . ALLLOW
-    (60) wireval -> . LITWIRE
-    (61) wireval -> . { wireconcat }
-    (62) wireval -> . ( wireexpr )
-    (63) wireval -> . ID [ arithexpr : arithexpr ]
-    (64) wireval -> . ID [ arithexpr ]
-    (65) wireval -> . unaop wireval
-    (70) wireval -> . ID
-    (66) unaop -> . ~
-    (67) unaop -> . &
-    (68) unaop -> . ^
-    (69) unaop -> . |
+    (19) portterminal -> ) .
 
-    ALLHIGH         shift and go to state 92
-    ALLLOW          shift and go to state 93
-    LITWIRE         shift and go to state 94
-    {               shift and go to state 95
-    (               shift and go to state 96
-    ID              shift and go to state 97
-    ~               shift and go to state 99
-    &               shift and go to state 100
-    ^               shift and go to state 101
-    |               shift and go to state 102
+    [               reduce using rule 19 (portterminal -> ) .)
+    ID              reduce using rule 19 (portterminal -> ) .)
+    ;               reduce using rule 19 (portterminal -> ) .)
 
-    unaop                          shift and go to state 98
-    wireval                        shift and go to state 140
 
 state 99
 
-    (66) unaop -> ~ .
+    (21) wireslice -> [ arithexpr : . arithexpr ]
+    (11) arithexpr -> . NUMBER
 
-    ALLHIGH         reduce using rule 66 (unaop -> ~ .)
-    ALLLOW          reduce using rule 66 (unaop -> ~ .)
-    LITWIRE         reduce using rule 66 (unaop -> ~ .)
-    {               reduce using rule 66 (unaop -> ~ .)
-    (               reduce using rule 66 (unaop -> ~ .)
-    ID              reduce using rule 66 (unaop -> ~ .)
-    ~               reduce using rule 66 (unaop -> ~ .)
-    &               reduce using rule 66 (unaop -> ~ .)
-    ^               reduce using rule 66 (unaop -> ~ .)
-    |               reduce using rule 66 (unaop -> ~ .)
+    NUMBER          shift and go to state 71
 
+    arithexpr                      shift and go to state 142
 
 state 100
 
-    (67) unaop -> & .
+    (74) wireval -> ID . [ arithexpr : arithexpr ]
+    (75) wireval -> ID . [ wireexpr ]
+    (81) wireval -> ID .
 
-    ALLHIGH         reduce using rule 67 (unaop -> & .)
-    ALLLOW          reduce using rule 67 (unaop -> & .)
-    LITWIRE         reduce using rule 67 (unaop -> & .)
-    {               reduce using rule 67 (unaop -> & .)
-    (               reduce using rule 67 (unaop -> & .)
-    ID              reduce using rule 67 (unaop -> & .)
-    ~               reduce using rule 67 (unaop -> & .)
-    &               reduce using rule 67 (unaop -> & .)
-    ^               reduce using rule 67 (unaop -> & .)
-    |               reduce using rule 67 (unaop -> & .)
+    [               shift and go to state 143
+    ?               reduce using rule 81 (wireval -> ID .)
+    +               reduce using rule 81 (wireval -> ID .)
+    -               reduce using rule 81 (wireval -> ID .)
+    *               reduce using rule 81 (wireval -> ID .)
+    &               reduce using rule 81 (wireval -> ID .)
+    |               reduce using rule 81 (wireval -> ID .)
+    ^               reduce using rule 81 (wireval -> ID .)
+    <               reduce using rule 81 (wireval -> ID .)
+    >               reduce using rule 81 (wireval -> ID .)
+    LSHIFT          reduce using rule 81 (wireval -> ID .)
+    RSHIFT          reduce using rule 81 (wireval -> ID .)
+    EQ              reduce using rule 81 (wireval -> ID .)
+    GEQ             reduce using rule 81 (wireval -> ID .)
+    LEQ             reduce using rule 81 (wireval -> ID .)
+    ,               reduce using rule 81 (wireval -> ID .)
+    )               reduce using rule 81 (wireval -> ID .)
+    ;               reduce using rule 81 (wireval -> ID .)
+    }               reduce using rule 81 (wireval -> ID .)
+    ]               reduce using rule 81 (wireval -> ID .)
+    :               reduce using rule 81 (wireval -> ID .)
 
 
 state 101
 
-    (68) unaop -> ^ .
+    (73) wireval -> ( . wireexpr )
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
 
-    ALLHIGH         reduce using rule 68 (unaop -> ^ .)
-    ALLLOW          reduce using rule 68 (unaop -> ^ .)
-    LITWIRE         reduce using rule 68 (unaop -> ^ .)
-    {               reduce using rule 68 (unaop -> ^ .)
-    (               reduce using rule 68 (unaop -> ^ .)
-    ID              reduce using rule 68 (unaop -> ^ .)
-    ~               reduce using rule 68 (unaop -> ^ .)
-    &               reduce using rule 68 (unaop -> ^ .)
-    ^               reduce using rule 68 (unaop -> ^ .)
-    |               reduce using rule 68 (unaop -> ^ .)
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
 
+    wireexpr                       shift and go to state 144
+    wireval                        shift and go to state 107
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
 
 state 102
 
-    (69) unaop -> | .
+    (97) moduleinst -> ID ID ( modportassign . )
 
-    ALLHIGH         reduce using rule 69 (unaop -> | .)
-    ALLLOW          reduce using rule 69 (unaop -> | .)
-    LITWIRE         reduce using rule 69 (unaop -> | .)
-    {               reduce using rule 69 (unaop -> | .)
-    (               reduce using rule 69 (unaop -> | .)
-    ID              reduce using rule 69 (unaop -> | .)
-    ~               reduce using rule 69 (unaop -> | .)
-    &               reduce using rule 69 (unaop -> | .)
-    ^               reduce using rule 69 (unaop -> | .)
-    |               reduce using rule 69 (unaop -> | .)
+    )               shift and go to state 145
 
 
 state 103
 
-    (51) lhs -> ID [ arithexpr . : arithexpr ]
+    (98) modportassign -> oneportassign .
+    (99) modportassign -> oneportassign . , modportassign
 
-    :               shift and go to state 141
+    )               reduce using rule 98 (modportassign -> oneportassign .)
+    ,               shift and go to state 146
 
 
 state 104
 
-    (52) lhs -> { lhsconcat } .
+    (100) modportassign -> empty .
 
-    =               reduce using rule 52 (lhs -> { lhsconcat } .)
-    ,               reduce using rule 52 (lhs -> { lhsconcat } .)
-    }               reduce using rule 52 (lhs -> { lhsconcat } .)
-    NONBLOCK        reduce using rule 52 (lhs -> { lhsconcat } .)
+    )               reduce using rule 100 (modportassign -> empty .)
 
 
 state 105
 
-    (54) lhsconcat -> lhs , . lhsconcat
-    (53) lhsconcat -> . lhs
-    (54) lhsconcat -> . lhs , lhsconcat
-    (50) lhs -> . ID
-    (51) lhs -> . ID [ arithexpr : arithexpr ]
-    (52) lhs -> . { lhsconcat }
+    (101) oneportassign -> wireexpr .
 
-    ID              shift and go to state 54
-    {               shift and go to state 55
+    ,               reduce using rule 101 (oneportassign -> wireexpr .)
+    )               reduce using rule 101 (oneportassign -> wireexpr .)
 
-    lhs                            shift and go to state 75
-    lhsconcat                      shift and go to state 142
 
 state 106
 
-    (33) always -> ALWAYS @ sensitivity alwayscontblock .
+    (102) oneportassign -> . . ID ( wireexpr )
 
-    ASSIGN          reduce using rule 33 (always -> ALWAYS @ sensitivity alwayscontblock .)
-    ALWAYS          reduce using rule 33 (always -> ALWAYS @ sensitivity alwayscontblock .)
-    ALWAYSFF        reduce using rule 33 (always -> ALWAYS @ sensitivity alwayscontblock .)
-    ALWAYSCOMB      reduce using rule 33 (always -> ALWAYS @ sensitivity alwayscontblock .)
-    WIRE            reduce using rule 33 (always -> ALWAYS @ sensitivity alwayscontblock .)
-    REG             reduce using rule 33 (always -> ALWAYS @ sensitivity alwayscontblock .)
-    LOGIC           reduce using rule 33 (always -> ALWAYS @ sensitivity alwayscontblock .)
-    ENDMODULE       reduce using rule 33 (always -> ALWAYS @ sensitivity alwayscontblock .)
+    ID              shift and go to state 147
 
 
 state 107
 
-    (36) sensitivity -> ( edge . ID )
+    (65) wireexpr -> wireval .
+    (66) wireexpr -> wireval . wireop wireexpr
+    (67) wireexpr -> wireval . ? wireexpr : wireexpr
+    (84) wireop -> . +
+    (85) wireop -> . -
+    (86) wireop -> . *
+    (87) wireop -> . &
+    (88) wireop -> . |
+    (89) wireop -> . ^
+    (90) wireop -> . <
+    (91) wireop -> . >
+    (92) wireop -> . LSHIFT
+    (93) wireop -> . RSHIFT
+    (94) wireop -> . EQ
+    (95) wireop -> . GEQ
+    (96) wireop -> . LEQ
 
-    ID              shift and go to state 143
+    ,               reduce using rule 65 (wireexpr -> wireval .)
+    )               reduce using rule 65 (wireexpr -> wireval .)
+    ;               reduce using rule 65 (wireexpr -> wireval .)
+    }               reduce using rule 65 (wireexpr -> wireval .)
+    ]               reduce using rule 65 (wireexpr -> wireval .)
+    :               reduce using rule 65 (wireexpr -> wireval .)
+    ?               shift and go to state 149
+    +               shift and go to state 150
+    -               shift and go to state 151
+    *               shift and go to state 152
+    &               shift and go to state 153
+    |               shift and go to state 154
+    ^               shift and go to state 155
+    <               shift and go to state 156
+    >               shift and go to state 157
+    LSHIFT          shift and go to state 158
+    RSHIFT          shift and go to state 159
+    EQ              shift and go to state 160
+    GEQ             shift and go to state 161
+    LEQ             shift and go to state 162
 
+    wireop                         shift and go to state 148
 
 state 108
 
-    (37) edge -> POSEDGE .
+    (68) wireval -> ALLHIGH .
 
-    ID              reduce using rule 37 (edge -> POSEDGE .)
+    ?               reduce using rule 68 (wireval -> ALLHIGH .)
+    +               reduce using rule 68 (wireval -> ALLHIGH .)
+    -               reduce using rule 68 (wireval -> ALLHIGH .)
+    *               reduce using rule 68 (wireval -> ALLHIGH .)
+    &               reduce using rule 68 (wireval -> ALLHIGH .)
+    |               reduce using rule 68 (wireval -> ALLHIGH .)
+    ^               reduce using rule 68 (wireval -> ALLHIGH .)
+    <               reduce using rule 68 (wireval -> ALLHIGH .)
+    >               reduce using rule 68 (wireval -> ALLHIGH .)
+    LSHIFT          reduce using rule 68 (wireval -> ALLHIGH .)
+    RSHIFT          reduce using rule 68 (wireval -> ALLHIGH .)
+    EQ              reduce using rule 68 (wireval -> ALLHIGH .)
+    GEQ             reduce using rule 68 (wireval -> ALLHIGH .)
+    LEQ             reduce using rule 68 (wireval -> ALLHIGH .)
+    ,               reduce using rule 68 (wireval -> ALLHIGH .)
+    )               reduce using rule 68 (wireval -> ALLHIGH .)
+    ;               reduce using rule 68 (wireval -> ALLHIGH .)
+    }               reduce using rule 68 (wireval -> ALLHIGH .)
+    ]               reduce using rule 68 (wireval -> ALLHIGH .)
+    :               reduce using rule 68 (wireval -> ALLHIGH .)
 
 
 state 109
 
-    (38) edge -> NEGEDGE .
+    (69) wireval -> ALLLOW .
 
-    ID              reduce using rule 38 (edge -> NEGEDGE .)
+    ?               reduce using rule 69 (wireval -> ALLLOW .)
+    +               reduce using rule 69 (wireval -> ALLLOW .)
+    -               reduce using rule 69 (wireval -> ALLLOW .)
+    *               reduce using rule 69 (wireval -> ALLLOW .)
+    &               reduce using rule 69 (wireval -> ALLLOW .)
+    |               reduce using rule 69 (wireval -> ALLLOW .)
+    ^               reduce using rule 69 (wireval -> ALLLOW .)
+    <               reduce using rule 69 (wireval -> ALLLOW .)
+    >               reduce using rule 69 (wireval -> ALLLOW .)
+    LSHIFT          reduce using rule 69 (wireval -> ALLLOW .)
+    RSHIFT          reduce using rule 69 (wireval -> ALLLOW .)
+    EQ              reduce using rule 69 (wireval -> ALLLOW .)
+    GEQ             reduce using rule 69 (wireval -> ALLLOW .)
+    LEQ             reduce using rule 69 (wireval -> ALLLOW .)
+    ,               reduce using rule 69 (wireval -> ALLLOW .)
+    )               reduce using rule 69 (wireval -> ALLLOW .)
+    ;               reduce using rule 69 (wireval -> ALLLOW .)
+    }               reduce using rule 69 (wireval -> ALLLOW .)
+    ]               reduce using rule 69 (wireval -> ALLLOW .)
+    :               reduce using rule 69 (wireval -> ALLLOW .)
 
 
 state 110
 
-    (34) always -> ALWAYSFF @ sensitivity alwayscontblock .
+    (70) wireval -> LITWIRE .
 
-    ASSIGN          reduce using rule 34 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
-    ALWAYS          reduce using rule 34 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
-    ALWAYSFF        reduce using rule 34 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
-    ALWAYSCOMB      reduce using rule 34 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
-    WIRE            reduce using rule 34 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
-    REG             reduce using rule 34 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
-    LOGIC           reduce using rule 34 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
-    ENDMODULE       reduce using rule 34 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
+    ?               reduce using rule 70 (wireval -> LITWIRE .)
+    +               reduce using rule 70 (wireval -> LITWIRE .)
+    -               reduce using rule 70 (wireval -> LITWIRE .)
+    *               reduce using rule 70 (wireval -> LITWIRE .)
+    &               reduce using rule 70 (wireval -> LITWIRE .)
+    |               reduce using rule 70 (wireval -> LITWIRE .)
+    ^               reduce using rule 70 (wireval -> LITWIRE .)
+    <               reduce using rule 70 (wireval -> LITWIRE .)
+    >               reduce using rule 70 (wireval -> LITWIRE .)
+    LSHIFT          reduce using rule 70 (wireval -> LITWIRE .)
+    RSHIFT          reduce using rule 70 (wireval -> LITWIRE .)
+    EQ              reduce using rule 70 (wireval -> LITWIRE .)
+    GEQ             reduce using rule 70 (wireval -> LITWIRE .)
+    LEQ             reduce using rule 70 (wireval -> LITWIRE .)
+    ,               reduce using rule 70 (wireval -> LITWIRE .)
+    )               reduce using rule 70 (wireval -> LITWIRE .)
+    ;               reduce using rule 70 (wireval -> LITWIRE .)
+    }               reduce using rule 70 (wireval -> LITWIRE .)
+    ]               reduce using rule 70 (wireval -> LITWIRE .)
+    :               reduce using rule 70 (wireval -> LITWIRE .)
 
 
 state 111
 
-    (39) alwayscontblock -> BEGIN alwayscont END .
+    (71) wireval -> arithexpr .
 
-    ASSIGN          reduce using rule 39 (alwayscontblock -> BEGIN alwayscont END .)
-    ALWAYS          reduce using rule 39 (alwayscontblock -> BEGIN alwayscont END .)
-    ALWAYSFF        reduce using rule 39 (alwayscontblock -> BEGIN alwayscont END .)
-    ALWAYSCOMB      reduce using rule 39 (alwayscontblock -> BEGIN alwayscont END .)
-    WIRE            reduce using rule 39 (alwayscontblock -> BEGIN alwayscont END .)
-    REG             reduce using rule 39 (alwayscontblock -> BEGIN alwayscont END .)
-    LOGIC           reduce using rule 39 (alwayscontblock -> BEGIN alwayscont END .)
-    ENDMODULE       reduce using rule 39 (alwayscontblock -> BEGIN alwayscont END .)
+    ?               reduce using rule 71 (wireval -> arithexpr .)
+    +               reduce using rule 71 (wireval -> arithexpr .)
+    -               reduce using rule 71 (wireval -> arithexpr .)
+    *               reduce using rule 71 (wireval -> arithexpr .)
+    &               reduce using rule 71 (wireval -> arithexpr .)
+    |               reduce using rule 71 (wireval -> arithexpr .)
+    ^               reduce using rule 71 (wireval -> arithexpr .)
+    <               reduce using rule 71 (wireval -> arithexpr .)
+    >               reduce using rule 71 (wireval -> arithexpr .)
+    LSHIFT          reduce using rule 71 (wireval -> arithexpr .)
+    RSHIFT          reduce using rule 71 (wireval -> arithexpr .)
+    EQ              reduce using rule 71 (wireval -> arithexpr .)
+    GEQ             reduce using rule 71 (wireval -> arithexpr .)
+    LEQ             reduce using rule 71 (wireval -> arithexpr .)
+    ,               reduce using rule 71 (wireval -> arithexpr .)
+    )               reduce using rule 71 (wireval -> arithexpr .)
+    ;               reduce using rule 71 (wireval -> arithexpr .)
+    }               reduce using rule 71 (wireval -> arithexpr .)
+    ]               reduce using rule 71 (wireval -> arithexpr .)
+    :               reduce using rule 71 (wireval -> arithexpr .)
 
 
 state 112
 
-    (40) alwayscont -> oneassign ; . alwayscont
-    (40) alwayscont -> . oneassign ; alwayscont
-    (41) alwayscont -> . ifblock alwayscont
-    (42) alwayscont -> . ifblock elseblock alwayscont
-    (43) alwayscont -> . empty
-    (44) oneassign -> . lhs = wireexpr
-    (45) oneassign -> . lhs NONBLOCK wireexpr
-    (46) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
-    (84) empty -> .
-    (50) lhs -> . ID
-    (51) lhs -> . ID [ arithexpr : arithexpr ]
-    (52) lhs -> . { lhsconcat }
+    (72) wireval -> { . wireconcat }
+    (82) wireconcat -> . wireexpr
+    (83) wireconcat -> . wireexpr , wireconcat
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
 
-    IF              shift and go to state 84
-    END             reduce using rule 84 (empty -> .)
-    ID              shift and go to state 54
-    {               shift and go to state 55
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
 
-    oneassign                      shift and go to state 80
-    alwayscont                     shift and go to state 144
-    ifblock                        shift and go to state 81
-    empty                          shift and go to state 82
-    lhs                            shift and go to state 83
+    wireconcat                     shift and go to state 163
+    wireexpr                       shift and go to state 164
+    wireval                        shift and go to state 107
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
 
 state 113
 
-    (41) alwayscont -> ifblock alwayscont .
+    (76) wireval -> unaop . wireval
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
 
-    END             reduce using rule 41 (alwayscont -> ifblock alwayscont .)
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
 
+    unaop                          shift and go to state 113
+    wireval                        shift and go to state 165
+    arithexpr                      shift and go to state 111
 
 state 114
 
-    (42) alwayscont -> ifblock elseblock . alwayscont
-    (40) alwayscont -> . oneassign ; alwayscont
-    (41) alwayscont -> . ifblock alwayscont
-    (42) alwayscont -> . ifblock elseblock alwayscont
-    (43) alwayscont -> . empty
-    (44) oneassign -> . lhs = wireexpr
-    (45) oneassign -> . lhs NONBLOCK wireexpr
-    (46) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
-    (84) empty -> .
-    (50) lhs -> . ID
-    (51) lhs -> . ID [ arithexpr : arithexpr ]
-    (52) lhs -> . { lhsconcat }
+    (77) unaop -> ~ .
 
-    IF              shift and go to state 84
-    END             reduce using rule 84 (empty -> .)
-    ID              shift and go to state 54
-    {               shift and go to state 55
+    ALLHIGH         reduce using rule 77 (unaop -> ~ .)
+    ALLLOW          reduce using rule 77 (unaop -> ~ .)
+    LITWIRE         reduce using rule 77 (unaop -> ~ .)
+    {               reduce using rule 77 (unaop -> ~ .)
+    (               reduce using rule 77 (unaop -> ~ .)
+    ID              reduce using rule 77 (unaop -> ~ .)
+    NUMBER          reduce using rule 77 (unaop -> ~ .)
+    ~               reduce using rule 77 (unaop -> ~ .)
+    &               reduce using rule 77 (unaop -> ~ .)
+    ^               reduce using rule 77 (unaop -> ~ .)
+    |               reduce using rule 77 (unaop -> ~ .)
 
-    ifblock                        shift and go to state 81
-    alwayscont                     shift and go to state 145
-    oneassign                      shift and go to state 80
-    empty                          shift and go to state 82
-    lhs                            shift and go to state 83
 
 state 115
 
-    (47) elseblock -> ELSE . ifblock
-    (48) elseblock -> ELSE . ifblock elseblock
-    (49) elseblock -> ELSE . BEGIN alwayscont END
-    (46) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
+    (78) unaop -> & .
 
-    BEGIN           shift and go to state 147
-    IF              shift and go to state 84
+    ALLHIGH         reduce using rule 78 (unaop -> & .)
+    ALLLOW          reduce using rule 78 (unaop -> & .)
+    LITWIRE         reduce using rule 78 (unaop -> & .)
+    {               reduce using rule 78 (unaop -> & .)
+    (               reduce using rule 78 (unaop -> & .)
+    ID              reduce using rule 78 (unaop -> & .)
+    NUMBER          reduce using rule 78 (unaop -> & .)
+    ~               reduce using rule 78 (unaop -> & .)
+    &               reduce using rule 78 (unaop -> & .)
+    ^               reduce using rule 78 (unaop -> & .)
+    |               reduce using rule 78 (unaop -> & .)
 
-    ifblock                        shift and go to state 146
 
 state 116
 
-    (44) oneassign -> lhs = . wireexpr
-    (55) wireexpr -> . wireval
-    (56) wireexpr -> . wireval wireop wireexpr
-    (57) wireexpr -> . wireval ? wireexpr : wireexpr
-    (58) wireval -> . ALLHIGH
-    (59) wireval -> . ALLLOW
-    (60) wireval -> . LITWIRE
-    (61) wireval -> . { wireconcat }
-    (62) wireval -> . ( wireexpr )
-    (63) wireval -> . ID [ arithexpr : arithexpr ]
-    (64) wireval -> . ID [ arithexpr ]
-    (65) wireval -> . unaop wireval
-    (70) wireval -> . ID
-    (66) unaop -> . ~
-    (67) unaop -> . &
-    (68) unaop -> . ^
-    (69) unaop -> . |
+    (79) unaop -> ^ .
 
-    ALLHIGH         shift and go to state 92
-    ALLLOW          shift and go to state 93
-    LITWIRE         shift and go to state 94
-    {               shift and go to state 95
-    (               shift and go to state 96
-    ID              shift and go to state 97
-    ~               shift and go to state 99
-    &               shift and go to state 100
-    ^               shift and go to state 101
-    |               shift and go to state 102
+    ALLHIGH         reduce using rule 79 (unaop -> ^ .)
+    ALLLOW          reduce using rule 79 (unaop -> ^ .)
+    LITWIRE         reduce using rule 79 (unaop -> ^ .)
+    {               reduce using rule 79 (unaop -> ^ .)
+    (               reduce using rule 79 (unaop -> ^ .)
+    ID              reduce using rule 79 (unaop -> ^ .)
+    NUMBER          reduce using rule 79 (unaop -> ^ .)
+    ~               reduce using rule 79 (unaop -> ^ .)
+    &               reduce using rule 79 (unaop -> ^ .)
+    ^               reduce using rule 79 (unaop -> ^ .)
+    |               reduce using rule 79 (unaop -> ^ .)
 
-    wireexpr                       shift and go to state 148
-    wireval                        shift and go to state 91
-    unaop                          shift and go to state 98
 
 state 117
 
-    (45) oneassign -> lhs NONBLOCK . wireexpr
-    (55) wireexpr -> . wireval
-    (56) wireexpr -> . wireval wireop wireexpr
-    (57) wireexpr -> . wireval ? wireexpr : wireexpr
-    (58) wireval -> . ALLHIGH
-    (59) wireval -> . ALLLOW
-    (60) wireval -> . LITWIRE
-    (61) wireval -> . { wireconcat }
-    (62) wireval -> . ( wireexpr )
-    (63) wireval -> . ID [ arithexpr : arithexpr ]
-    (64) wireval -> . ID [ arithexpr ]
-    (65) wireval -> . unaop wireval
-    (70) wireval -> . ID
-    (66) unaop -> . ~
-    (67) unaop -> . &
-    (68) unaop -> . ^
-    (69) unaop -> . |
+    (80) unaop -> | .
 
-    ALLHIGH         shift and go to state 92
-    ALLLOW          shift and go to state 93
-    LITWIRE         shift and go to state 94
-    {               shift and go to state 95
-    (               shift and go to state 96
-    ID              shift and go to state 97
-    ~               shift and go to state 99
-    &               shift and go to state 100
-    ^               shift and go to state 101
-    |               shift and go to state 102
+    ALLHIGH         reduce using rule 80 (unaop -> | .)
+    ALLLOW          reduce using rule 80 (unaop -> | .)
+    LITWIRE         reduce using rule 80 (unaop -> | .)
+    {               reduce using rule 80 (unaop -> | .)
+    (               reduce using rule 80 (unaop -> | .)
+    ID              reduce using rule 80 (unaop -> | .)
+    NUMBER          reduce using rule 80 (unaop -> | .)
+    ~               reduce using rule 80 (unaop -> | .)
+    &               reduce using rule 80 (unaop -> | .)
+    ^               reduce using rule 80 (unaop -> | .)
+    |               reduce using rule 80 (unaop -> | .)
 
-    wireexpr                       shift and go to state 149
-    wireval                        shift and go to state 91
-    unaop                          shift and go to state 98
 
 state 118
 
-    (46) ifblock -> IF ( . wireexpr ) BEGIN alwayscont END
-    (55) wireexpr -> . wireval
-    (56) wireexpr -> . wireval wireop wireexpr
-    (57) wireexpr -> . wireval ? wireexpr : wireexpr
-    (58) wireval -> . ALLHIGH
-    (59) wireval -> . ALLLOW
-    (60) wireval -> . LITWIRE
-    (61) wireval -> . { wireconcat }
-    (62) wireval -> . ( wireexpr )
-    (63) wireval -> . ID [ arithexpr : arithexpr ]
-    (64) wireval -> . ID [ arithexpr ]
-    (65) wireval -> . unaop wireval
-    (70) wireval -> . ID
-    (66) unaop -> . ~
-    (67) unaop -> . &
-    (68) unaop -> . ^
-    (69) unaop -> . |
+    (32) wiredec -> wiretype [ arithexpr : . arithexpr ] idassigns
+    (33) wiredec -> wiretype [ arithexpr : . arithexpr ] ID [ arithexpr : arithexpr ]
+    (11) arithexpr -> . NUMBER
 
-    ALLHIGH         shift and go to state 92
-    ALLLOW          shift and go to state 93
-    LITWIRE         shift and go to state 94
-    {               shift and go to state 95
-    (               shift and go to state 96
-    ID              shift and go to state 97
-    ~               shift and go to state 99
-    &               shift and go to state 100
-    ^               shift and go to state 101
-    |               shift and go to state 102
+    NUMBER          shift and go to state 71
 
-    wireexpr                       shift and go to state 150
-    wireval                        shift and go to state 91
-    unaop                          shift and go to state 98
+    arithexpr                      shift and go to state 166
 
 state 119
+
+    (38) oneidassign -> ID = wireexpr .
+
+    ,               reduce using rule 38 (oneidassign -> ID = wireexpr .)
+    ;               reduce using rule 38 (oneidassign -> ID = wireexpr .)
+
+
+state 120
+
+    (36) idassigns -> oneidassign , idassigns .
+
+    ;               reduce using rule 36 (idassigns -> oneidassign , idassigns .)
+
+
+state 121
+
+    (42) assign -> ASSIGN lhs = wireexpr .
+
+    ;               reduce using rule 42 (assign -> ASSIGN lhs = wireexpr .)
+
+
+state 122
+
+    (61) lhs -> ID [ arithexpr . : arithexpr ]
+
+    :               shift and go to state 167
+
+
+state 123
+
+    (62) lhs -> { lhsconcat } .
+
+    =               reduce using rule 62 (lhs -> { lhsconcat } .)
+    ,               reduce using rule 62 (lhs -> { lhsconcat } .)
+    }               reduce using rule 62 (lhs -> { lhsconcat } .)
+    NONBLOCK        reduce using rule 62 (lhs -> { lhsconcat } .)
+
+
+state 124
+
+    (64) lhsconcat -> lhs , . lhsconcat
+    (63) lhsconcat -> . lhs
+    (64) lhsconcat -> . lhs , lhsconcat
+    (60) lhs -> . ID
+    (61) lhs -> . ID [ arithexpr : arithexpr ]
+    (62) lhs -> . { lhsconcat }
+
+    ID              shift and go to state 57
+    {               shift and go to state 58
+
+    lhs                            shift and go to state 83
+    lhsconcat                      shift and go to state 168
+
+state 125
+
+    (43) always -> ALWAYS @ sensitivity alwayscontblock .
+
+    ASSIGN          reduce using rule 43 (always -> ALWAYS @ sensitivity alwayscontblock .)
+    ALWAYS          reduce using rule 43 (always -> ALWAYS @ sensitivity alwayscontblock .)
+    ALWAYSFF        reduce using rule 43 (always -> ALWAYS @ sensitivity alwayscontblock .)
+    ALWAYSCOMB      reduce using rule 43 (always -> ALWAYS @ sensitivity alwayscontblock .)
+    ID              reduce using rule 43 (always -> ALWAYS @ sensitivity alwayscontblock .)
+    WIRE            reduce using rule 43 (always -> ALWAYS @ sensitivity alwayscontblock .)
+    REG             reduce using rule 43 (always -> ALWAYS @ sensitivity alwayscontblock .)
+    LOGIC           reduce using rule 43 (always -> ALWAYS @ sensitivity alwayscontblock .)
+    ENDMODULE       reduce using rule 43 (always -> ALWAYS @ sensitivity alwayscontblock .)
+
+
+state 126
+
+    (46) sensitivity -> ( edge . ID )
+
+    ID              shift and go to state 169
+
+
+state 127
+
+    (47) edge -> POSEDGE .
+
+    ID              reduce using rule 47 (edge -> POSEDGE .)
+
+
+state 128
+
+    (48) edge -> NEGEDGE .
+
+    ID              reduce using rule 48 (edge -> NEGEDGE .)
+
+
+state 129
+
+    (44) always -> ALWAYSFF @ sensitivity alwayscontblock .
+
+    ASSIGN          reduce using rule 44 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
+    ALWAYS          reduce using rule 44 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
+    ALWAYSFF        reduce using rule 44 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
+    ALWAYSCOMB      reduce using rule 44 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
+    ID              reduce using rule 44 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
+    WIRE            reduce using rule 44 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
+    REG             reduce using rule 44 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
+    LOGIC           reduce using rule 44 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
+    ENDMODULE       reduce using rule 44 (always -> ALWAYSFF @ sensitivity alwayscontblock .)
+
+
+state 130
+
+    (49) alwayscontblock -> BEGIN alwayscont END .
+
+    ASSIGN          reduce using rule 49 (alwayscontblock -> BEGIN alwayscont END .)
+    ALWAYS          reduce using rule 49 (alwayscontblock -> BEGIN alwayscont END .)
+    ALWAYSFF        reduce using rule 49 (alwayscontblock -> BEGIN alwayscont END .)
+    ALWAYSCOMB      reduce using rule 49 (alwayscontblock -> BEGIN alwayscont END .)
+    ID              reduce using rule 49 (alwayscontblock -> BEGIN alwayscont END .)
+    WIRE            reduce using rule 49 (alwayscontblock -> BEGIN alwayscont END .)
+    REG             reduce using rule 49 (alwayscontblock -> BEGIN alwayscont END .)
+    LOGIC           reduce using rule 49 (alwayscontblock -> BEGIN alwayscont END .)
+    ENDMODULE       reduce using rule 49 (alwayscontblock -> BEGIN alwayscont END .)
+
+
+state 131
+
+    (50) alwayscont -> oneassign ; . alwayscont
+    (50) alwayscont -> . oneassign ; alwayscont
+    (51) alwayscont -> . ifblock alwayscont
+    (52) alwayscont -> . ifblock elseblock alwayscont
+    (53) alwayscont -> . empty
+    (54) oneassign -> . lhs = wireexpr
+    (55) oneassign -> . lhs NONBLOCK wireexpr
+    (56) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
+    (103) empty -> .
+    (60) lhs -> . ID
+    (61) lhs -> . ID [ arithexpr : arithexpr ]
+    (62) lhs -> . { lhsconcat }
+
+    IF              shift and go to state 92
+    END             reduce using rule 103 (empty -> .)
+    ID              shift and go to state 57
+    {               shift and go to state 58
+
+    oneassign                      shift and go to state 88
+    alwayscont                     shift and go to state 170
+    ifblock                        shift and go to state 89
+    empty                          shift and go to state 90
+    lhs                            shift and go to state 91
+
+state 132
+
+    (51) alwayscont -> ifblock alwayscont .
+
+    END             reduce using rule 51 (alwayscont -> ifblock alwayscont .)
+
+
+state 133
+
+    (52) alwayscont -> ifblock elseblock . alwayscont
+    (50) alwayscont -> . oneassign ; alwayscont
+    (51) alwayscont -> . ifblock alwayscont
+    (52) alwayscont -> . ifblock elseblock alwayscont
+    (53) alwayscont -> . empty
+    (54) oneassign -> . lhs = wireexpr
+    (55) oneassign -> . lhs NONBLOCK wireexpr
+    (56) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
+    (103) empty -> .
+    (60) lhs -> . ID
+    (61) lhs -> . ID [ arithexpr : arithexpr ]
+    (62) lhs -> . { lhsconcat }
+
+    IF              shift and go to state 92
+    END             reduce using rule 103 (empty -> .)
+    ID              shift and go to state 57
+    {               shift and go to state 58
+
+    ifblock                        shift and go to state 89
+    alwayscont                     shift and go to state 171
+    oneassign                      shift and go to state 88
+    empty                          shift and go to state 90
+    lhs                            shift and go to state 91
+
+state 134
+
+    (57) elseblock -> ELSE . ifblock
+    (58) elseblock -> ELSE . ifblock elseblock
+    (59) elseblock -> ELSE . BEGIN alwayscont END
+    (56) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
+
+    BEGIN           shift and go to state 173
+    IF              shift and go to state 92
+
+    ifblock                        shift and go to state 172
+
+state 135
+
+    (54) oneassign -> lhs = . wireexpr
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
+
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
+
+    wireexpr                       shift and go to state 174
+    wireval                        shift and go to state 107
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
+
+state 136
+
+    (55) oneassign -> lhs NONBLOCK . wireexpr
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
+
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
+
+    wireexpr                       shift and go to state 175
+    wireval                        shift and go to state 107
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
+
+state 137
+
+    (56) ifblock -> IF ( . wireexpr ) BEGIN alwayscont END
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
+
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
+
+    wireexpr                       shift and go to state 176
+    wireval                        shift and go to state 107
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
+
+state 138
 
     (8) paramplus -> , oneparam paramplus .
 
     )               reduce using rule 8 (paramplus -> , oneparam paramplus .)
 
 
-state 120
+state 139
 
     (10) oneparam -> PARAMETER ID = arithexpr .
 
@@ -1789,775 +2216,1098 @@ state 120
     )               reduce using rule 10 (oneparam -> PARAMETER ID = arithexpr .)
 
 
-state 121
-
-    (18) oneport -> inouttype [ arithexpr : arithexpr . ] ID
-
-    ]               shift and go to state 151
-
-
-state 122
-
-    (27) wiredec -> wiretype [ arithexpr : arithexpr . ] ID
-
-    ]               shift and go to state 152
-
-
-state 123
-
-    (56) wireexpr -> wireval wireop . wireexpr
-    (55) wireexpr -> . wireval
-    (56) wireexpr -> . wireval wireop wireexpr
-    (57) wireexpr -> . wireval ? wireexpr : wireexpr
-    (58) wireval -> . ALLHIGH
-    (59) wireval -> . ALLLOW
-    (60) wireval -> . LITWIRE
-    (61) wireval -> . { wireconcat }
-    (62) wireval -> . ( wireexpr )
-    (63) wireval -> . ID [ arithexpr : arithexpr ]
-    (64) wireval -> . ID [ arithexpr ]
-    (65) wireval -> . unaop wireval
-    (70) wireval -> . ID
-    (66) unaop -> . ~
-    (67) unaop -> . &
-    (68) unaop -> . ^
-    (69) unaop -> . |
-
-    ALLHIGH         shift and go to state 92
-    ALLLOW          shift and go to state 93
-    LITWIRE         shift and go to state 94
-    {               shift and go to state 95
-    (               shift and go to state 96
-    ID              shift and go to state 97
-    ~               shift and go to state 99
-    &               shift and go to state 100
-    ^               shift and go to state 101
-    |               shift and go to state 102
-
-    wireval                        shift and go to state 91
-    wireexpr                       shift and go to state 153
-    unaop                          shift and go to state 98
-
-state 124
-
-    (57) wireexpr -> wireval ? . wireexpr : wireexpr
-    (55) wireexpr -> . wireval
-    (56) wireexpr -> . wireval wireop wireexpr
-    (57) wireexpr -> . wireval ? wireexpr : wireexpr
-    (58) wireval -> . ALLHIGH
-    (59) wireval -> . ALLLOW
-    (60) wireval -> . LITWIRE
-    (61) wireval -> . { wireconcat }
-    (62) wireval -> . ( wireexpr )
-    (63) wireval -> . ID [ arithexpr : arithexpr ]
-    (64) wireval -> . ID [ arithexpr ]
-    (65) wireval -> . unaop wireval
-    (70) wireval -> . ID
-    (66) unaop -> . ~
-    (67) unaop -> . &
-    (68) unaop -> . ^
-    (69) unaop -> . |
-
-    ALLHIGH         shift and go to state 92
-    ALLLOW          shift and go to state 93
-    LITWIRE         shift and go to state 94
-    {               shift and go to state 95
-    (               shift and go to state 96
-    ID              shift and go to state 97
-    ~               shift and go to state 99
-    &               shift and go to state 100
-    ^               shift and go to state 101
-    |               shift and go to state 102
-
-    wireval                        shift and go to state 91
-    wireexpr                       shift and go to state 154
-    unaop                          shift and go to state 98
-
-state 125
-
-    (73) wireop -> + .
-
-    ALLHIGH         reduce using rule 73 (wireop -> + .)
-    ALLLOW          reduce using rule 73 (wireop -> + .)
-    LITWIRE         reduce using rule 73 (wireop -> + .)
-    {               reduce using rule 73 (wireop -> + .)
-    (               reduce using rule 73 (wireop -> + .)
-    ID              reduce using rule 73 (wireop -> + .)
-    ~               reduce using rule 73 (wireop -> + .)
-    &               reduce using rule 73 (wireop -> + .)
-    ^               reduce using rule 73 (wireop -> + .)
-    |               reduce using rule 73 (wireop -> + .)
-
-
-state 126
-
-    (74) wireop -> - .
-
-    ALLHIGH         reduce using rule 74 (wireop -> - .)
-    ALLLOW          reduce using rule 74 (wireop -> - .)
-    LITWIRE         reduce using rule 74 (wireop -> - .)
-    {               reduce using rule 74 (wireop -> - .)
-    (               reduce using rule 74 (wireop -> - .)
-    ID              reduce using rule 74 (wireop -> - .)
-    ~               reduce using rule 74 (wireop -> - .)
-    &               reduce using rule 74 (wireop -> - .)
-    ^               reduce using rule 74 (wireop -> - .)
-    |               reduce using rule 74 (wireop -> - .)
-
-
-state 127
-
-    (75) wireop -> * .
-
-    ALLHIGH         reduce using rule 75 (wireop -> * .)
-    ALLLOW          reduce using rule 75 (wireop -> * .)
-    LITWIRE         reduce using rule 75 (wireop -> * .)
-    {               reduce using rule 75 (wireop -> * .)
-    (               reduce using rule 75 (wireop -> * .)
-    ID              reduce using rule 75 (wireop -> * .)
-    ~               reduce using rule 75 (wireop -> * .)
-    &               reduce using rule 75 (wireop -> * .)
-    ^               reduce using rule 75 (wireop -> * .)
-    |               reduce using rule 75 (wireop -> * .)
-
-
-state 128
-
-    (76) wireop -> & .
-
-    ALLHIGH         reduce using rule 76 (wireop -> & .)
-    ALLLOW          reduce using rule 76 (wireop -> & .)
-    LITWIRE         reduce using rule 76 (wireop -> & .)
-    {               reduce using rule 76 (wireop -> & .)
-    (               reduce using rule 76 (wireop -> & .)
-    ID              reduce using rule 76 (wireop -> & .)
-    ~               reduce using rule 76 (wireop -> & .)
-    &               reduce using rule 76 (wireop -> & .)
-    ^               reduce using rule 76 (wireop -> & .)
-    |               reduce using rule 76 (wireop -> & .)
-
-
-state 129
-
-    (77) wireop -> | .
-
-    ALLHIGH         reduce using rule 77 (wireop -> | .)
-    ALLLOW          reduce using rule 77 (wireop -> | .)
-    LITWIRE         reduce using rule 77 (wireop -> | .)
-    {               reduce using rule 77 (wireop -> | .)
-    (               reduce using rule 77 (wireop -> | .)
-    ID              reduce using rule 77 (wireop -> | .)
-    ~               reduce using rule 77 (wireop -> | .)
-    &               reduce using rule 77 (wireop -> | .)
-    ^               reduce using rule 77 (wireop -> | .)
-    |               reduce using rule 77 (wireop -> | .)
-
-
-state 130
-
-    (78) wireop -> ^ .
-
-    ALLHIGH         reduce using rule 78 (wireop -> ^ .)
-    ALLLOW          reduce using rule 78 (wireop -> ^ .)
-    LITWIRE         reduce using rule 78 (wireop -> ^ .)
-    {               reduce using rule 78 (wireop -> ^ .)
-    (               reduce using rule 78 (wireop -> ^ .)
-    ID              reduce using rule 78 (wireop -> ^ .)
-    ~               reduce using rule 78 (wireop -> ^ .)
-    &               reduce using rule 78 (wireop -> ^ .)
-    ^               reduce using rule 78 (wireop -> ^ .)
-    |               reduce using rule 78 (wireop -> ^ .)
-
-
-state 131
-
-    (79) wireop -> < .
-
-    ALLHIGH         reduce using rule 79 (wireop -> < .)
-    ALLLOW          reduce using rule 79 (wireop -> < .)
-    LITWIRE         reduce using rule 79 (wireop -> < .)
-    {               reduce using rule 79 (wireop -> < .)
-    (               reduce using rule 79 (wireop -> < .)
-    ID              reduce using rule 79 (wireop -> < .)
-    ~               reduce using rule 79 (wireop -> < .)
-    &               reduce using rule 79 (wireop -> < .)
-    ^               reduce using rule 79 (wireop -> < .)
-    |               reduce using rule 79 (wireop -> < .)
-
-
-state 132
-
-    (80) wireop -> > .
-
-    ALLHIGH         reduce using rule 80 (wireop -> > .)
-    ALLLOW          reduce using rule 80 (wireop -> > .)
-    LITWIRE         reduce using rule 80 (wireop -> > .)
-    {               reduce using rule 80 (wireop -> > .)
-    (               reduce using rule 80 (wireop -> > .)
-    ID              reduce using rule 80 (wireop -> > .)
-    ~               reduce using rule 80 (wireop -> > .)
-    &               reduce using rule 80 (wireop -> > .)
-    ^               reduce using rule 80 (wireop -> > .)
-    |               reduce using rule 80 (wireop -> > .)
-
-
-state 133
-
-    (81) wireop -> EQ .
-
-    ALLHIGH         reduce using rule 81 (wireop -> EQ .)
-    ALLLOW          reduce using rule 81 (wireop -> EQ .)
-    LITWIRE         reduce using rule 81 (wireop -> EQ .)
-    {               reduce using rule 81 (wireop -> EQ .)
-    (               reduce using rule 81 (wireop -> EQ .)
-    ID              reduce using rule 81 (wireop -> EQ .)
-    ~               reduce using rule 81 (wireop -> EQ .)
-    &               reduce using rule 81 (wireop -> EQ .)
-    ^               reduce using rule 81 (wireop -> EQ .)
-    |               reduce using rule 81 (wireop -> EQ .)
-
-
-state 134
-
-    (82) wireop -> GEQ .
-
-    ALLHIGH         reduce using rule 82 (wireop -> GEQ .)
-    ALLLOW          reduce using rule 82 (wireop -> GEQ .)
-    LITWIRE         reduce using rule 82 (wireop -> GEQ .)
-    {               reduce using rule 82 (wireop -> GEQ .)
-    (               reduce using rule 82 (wireop -> GEQ .)
-    ID              reduce using rule 82 (wireop -> GEQ .)
-    ~               reduce using rule 82 (wireop -> GEQ .)
-    &               reduce using rule 82 (wireop -> GEQ .)
-    ^               reduce using rule 82 (wireop -> GEQ .)
-    |               reduce using rule 82 (wireop -> GEQ .)
-
-
-state 135
-
-    (83) wireop -> LEQ .
-
-    ALLHIGH         reduce using rule 83 (wireop -> LEQ .)
-    ALLLOW          reduce using rule 83 (wireop -> LEQ .)
-    LITWIRE         reduce using rule 83 (wireop -> LEQ .)
-    {               reduce using rule 83 (wireop -> LEQ .)
-    (               reduce using rule 83 (wireop -> LEQ .)
-    ID              reduce using rule 83 (wireop -> LEQ .)
-    ~               reduce using rule 83 (wireop -> LEQ .)
-    &               reduce using rule 83 (wireop -> LEQ .)
-    ^               reduce using rule 83 (wireop -> LEQ .)
-    |               reduce using rule 83 (wireop -> LEQ .)
-
-
-state 136
-
-    (61) wireval -> { wireconcat . }
-
-    }               shift and go to state 155
-
-
-state 137
-
-    (71) wireconcat -> wireexpr .
-    (72) wireconcat -> wireexpr . , wireconcat
-
-    }               reduce using rule 71 (wireconcat -> wireexpr .)
-    ,               shift and go to state 156
-
-
-state 138
-
-    (62) wireval -> ( wireexpr . )
-
-    )               shift and go to state 157
-
-
-state 139
-
-    (63) wireval -> ID [ . arithexpr : arithexpr ]
-    (64) wireval -> ID [ . arithexpr ]
-    (11) arithexpr -> . NUMBER
-
-    NUMBER          shift and go to state 67
-
-    arithexpr                      shift and go to state 158
-
 state 140
 
-    (65) wireval -> unaop wireval .
+    (18) idsterminal -> ID , idsterminal .
 
-    ?               reduce using rule 65 (wireval -> unaop wireval .)
-    +               reduce using rule 65 (wireval -> unaop wireval .)
-    -               reduce using rule 65 (wireval -> unaop wireval .)
-    *               reduce using rule 65 (wireval -> unaop wireval .)
-    &               reduce using rule 65 (wireval -> unaop wireval .)
-    |               reduce using rule 65 (wireval -> unaop wireval .)
-    ^               reduce using rule 65 (wireval -> unaop wireval .)
-    <               reduce using rule 65 (wireval -> unaop wireval .)
-    >               reduce using rule 65 (wireval -> unaop wireval .)
-    EQ              reduce using rule 65 (wireval -> unaop wireval .)
-    GEQ             reduce using rule 65 (wireval -> unaop wireval .)
-    LEQ             reduce using rule 65 (wireval -> unaop wireval .)
-    ;               reduce using rule 65 (wireval -> unaop wireval .)
-    ,               reduce using rule 65 (wireval -> unaop wireval .)
-    }               reduce using rule 65 (wireval -> unaop wireval .)
-    )               reduce using rule 65 (wireval -> unaop wireval .)
-    :               reduce using rule 65 (wireval -> unaop wireval .)
+    [               reduce using rule 18 (idsterminal -> ID , idsterminal .)
+    ID              reduce using rule 18 (idsterminal -> ID , idsterminal .)
+    ;               reduce using rule 18 (idsterminal -> ID , idsterminal .)
 
 
 state 141
 
-    (51) lhs -> ID [ arithexpr : . arithexpr ]
-    (11) arithexpr -> . NUMBER
+    (20) portterminal -> , porttype .
 
-    NUMBER          shift and go to state 67
+    [               reduce using rule 20 (portterminal -> , porttype .)
+    ID              reduce using rule 20 (portterminal -> , porttype .)
+    ;               reduce using rule 20 (portterminal -> , porttype .)
 
-    arithexpr                      shift and go to state 159
 
 state 142
 
-    (54) lhsconcat -> lhs , lhsconcat .
+    (21) wireslice -> [ arithexpr : arithexpr . ]
 
-    }               reduce using rule 54 (lhsconcat -> lhs , lhsconcat .)
+    ]               shift and go to state 177
 
 
 state 143
 
-    (36) sensitivity -> ( edge ID . )
+    (74) wireval -> ID [ . arithexpr : arithexpr ]
+    (75) wireval -> ID [ . wireexpr ]
+    (11) arithexpr -> . NUMBER
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
 
-    )               shift and go to state 160
+    NUMBER          shift and go to state 71
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
 
+    arithexpr                      shift and go to state 178
+    wireexpr                       shift and go to state 179
+    wireval                        shift and go to state 107
+    unaop                          shift and go to state 113
 
 state 144
 
-    (40) alwayscont -> oneassign ; alwayscont .
+    (73) wireval -> ( wireexpr . )
 
-    END             reduce using rule 40 (alwayscont -> oneassign ; alwayscont .)
+    )               shift and go to state 180
 
 
 state 145
 
-    (42) alwayscont -> ifblock elseblock alwayscont .
+    (97) moduleinst -> ID ID ( modportassign ) .
 
-    END             reduce using rule 42 (alwayscont -> ifblock elseblock alwayscont .)
+    ;               reduce using rule 97 (moduleinst -> ID ID ( modportassign ) .)
 
 
 state 146
 
-    (47) elseblock -> ELSE ifblock .
-    (48) elseblock -> ELSE ifblock . elseblock
-    (47) elseblock -> . ELSE ifblock
-    (48) elseblock -> . ELSE ifblock elseblock
-    (49) elseblock -> . ELSE BEGIN alwayscont END
+    (99) modportassign -> oneportassign , . modportassign
+    (98) modportassign -> . oneportassign
+    (99) modportassign -> . oneportassign , modportassign
+    (100) modportassign -> . empty
+    (101) oneportassign -> . wireexpr
+    (102) oneportassign -> . . ID ( wireexpr )
+    (103) empty -> .
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
 
-    IF              reduce using rule 47 (elseblock -> ELSE ifblock .)
-    ID              reduce using rule 47 (elseblock -> ELSE ifblock .)
-    {               reduce using rule 47 (elseblock -> ELSE ifblock .)
-    END             reduce using rule 47 (elseblock -> ELSE ifblock .)
-    ELSE            shift and go to state 115
+    .               shift and go to state 106
+    )               reduce using rule 103 (empty -> .)
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
 
-    elseblock                      shift and go to state 161
+    oneportassign                  shift and go to state 103
+    modportassign                  shift and go to state 181
+    empty                          shift and go to state 104
+    wireexpr                       shift and go to state 105
+    wireval                        shift and go to state 107
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
 
 state 147
 
-    (49) elseblock -> ELSE BEGIN . alwayscont END
-    (40) alwayscont -> . oneassign ; alwayscont
-    (41) alwayscont -> . ifblock alwayscont
-    (42) alwayscont -> . ifblock elseblock alwayscont
-    (43) alwayscont -> . empty
-    (44) oneassign -> . lhs = wireexpr
-    (45) oneassign -> . lhs NONBLOCK wireexpr
-    (46) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
-    (84) empty -> .
-    (50) lhs -> . ID
-    (51) lhs -> . ID [ arithexpr : arithexpr ]
-    (52) lhs -> . { lhsconcat }
+    (102) oneportassign -> . ID . ( wireexpr )
 
-    IF              shift and go to state 84
-    END             reduce using rule 84 (empty -> .)
-    ID              shift and go to state 54
-    {               shift and go to state 55
+    (               shift and go to state 182
 
-    alwayscont                     shift and go to state 162
-    oneassign                      shift and go to state 80
-    ifblock                        shift and go to state 81
-    empty                          shift and go to state 82
-    lhs                            shift and go to state 83
 
 state 148
 
-    (44) oneassign -> lhs = wireexpr .
+    (66) wireexpr -> wireval wireop . wireexpr
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
 
-    ;               reduce using rule 44 (oneassign -> lhs = wireexpr .)
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
 
+    wireval                        shift and go to state 107
+    wireexpr                       shift and go to state 183
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
 
 state 149
 
-    (45) oneassign -> lhs NONBLOCK wireexpr .
+    (67) wireexpr -> wireval ? . wireexpr : wireexpr
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
 
-    ;               reduce using rule 45 (oneassign -> lhs NONBLOCK wireexpr .)
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
 
+    wireval                        shift and go to state 107
+    wireexpr                       shift and go to state 184
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
 
 state 150
 
-    (46) ifblock -> IF ( wireexpr . ) BEGIN alwayscont END
+    (84) wireop -> + .
 
-    )               shift and go to state 163
+    ALLHIGH         reduce using rule 84 (wireop -> + .)
+    ALLLOW          reduce using rule 84 (wireop -> + .)
+    LITWIRE         reduce using rule 84 (wireop -> + .)
+    {               reduce using rule 84 (wireop -> + .)
+    (               reduce using rule 84 (wireop -> + .)
+    ID              reduce using rule 84 (wireop -> + .)
+    NUMBER          reduce using rule 84 (wireop -> + .)
+    ~               reduce using rule 84 (wireop -> + .)
+    &               reduce using rule 84 (wireop -> + .)
+    ^               reduce using rule 84 (wireop -> + .)
+    |               reduce using rule 84 (wireop -> + .)
 
 
 state 151
 
-    (18) oneport -> inouttype [ arithexpr : arithexpr ] . ID
+    (85) wireop -> - .
 
-    ID              shift and go to state 164
+    ALLHIGH         reduce using rule 85 (wireop -> - .)
+    ALLLOW          reduce using rule 85 (wireop -> - .)
+    LITWIRE         reduce using rule 85 (wireop -> - .)
+    {               reduce using rule 85 (wireop -> - .)
+    (               reduce using rule 85 (wireop -> - .)
+    ID              reduce using rule 85 (wireop -> - .)
+    NUMBER          reduce using rule 85 (wireop -> - .)
+    ~               reduce using rule 85 (wireop -> - .)
+    &               reduce using rule 85 (wireop -> - .)
+    ^               reduce using rule 85 (wireop -> - .)
+    |               reduce using rule 85 (wireop -> - .)
 
 
 state 152
 
-    (27) wiredec -> wiretype [ arithexpr : arithexpr ] . ID
+    (86) wireop -> * .
 
-    ID              shift and go to state 165
+    ALLHIGH         reduce using rule 86 (wireop -> * .)
+    ALLLOW          reduce using rule 86 (wireop -> * .)
+    LITWIRE         reduce using rule 86 (wireop -> * .)
+    {               reduce using rule 86 (wireop -> * .)
+    (               reduce using rule 86 (wireop -> * .)
+    ID              reduce using rule 86 (wireop -> * .)
+    NUMBER          reduce using rule 86 (wireop -> * .)
+    ~               reduce using rule 86 (wireop -> * .)
+    &               reduce using rule 86 (wireop -> * .)
+    ^               reduce using rule 86 (wireop -> * .)
+    |               reduce using rule 86 (wireop -> * .)
 
 
 state 153
 
-    (56) wireexpr -> wireval wireop wireexpr .
+    (87) wireop -> & .
 
-    ;               reduce using rule 56 (wireexpr -> wireval wireop wireexpr .)
-    ,               reduce using rule 56 (wireexpr -> wireval wireop wireexpr .)
-    }               reduce using rule 56 (wireexpr -> wireval wireop wireexpr .)
-    )               reduce using rule 56 (wireexpr -> wireval wireop wireexpr .)
-    :               reduce using rule 56 (wireexpr -> wireval wireop wireexpr .)
+    ALLHIGH         reduce using rule 87 (wireop -> & .)
+    ALLLOW          reduce using rule 87 (wireop -> & .)
+    LITWIRE         reduce using rule 87 (wireop -> & .)
+    {               reduce using rule 87 (wireop -> & .)
+    (               reduce using rule 87 (wireop -> & .)
+    ID              reduce using rule 87 (wireop -> & .)
+    NUMBER          reduce using rule 87 (wireop -> & .)
+    ~               reduce using rule 87 (wireop -> & .)
+    &               reduce using rule 87 (wireop -> & .)
+    ^               reduce using rule 87 (wireop -> & .)
+    |               reduce using rule 87 (wireop -> & .)
 
 
 state 154
 
-    (57) wireexpr -> wireval ? wireexpr . : wireexpr
+    (88) wireop -> | .
 
-    :               shift and go to state 166
+    ALLHIGH         reduce using rule 88 (wireop -> | .)
+    ALLLOW          reduce using rule 88 (wireop -> | .)
+    LITWIRE         reduce using rule 88 (wireop -> | .)
+    {               reduce using rule 88 (wireop -> | .)
+    (               reduce using rule 88 (wireop -> | .)
+    ID              reduce using rule 88 (wireop -> | .)
+    NUMBER          reduce using rule 88 (wireop -> | .)
+    ~               reduce using rule 88 (wireop -> | .)
+    &               reduce using rule 88 (wireop -> | .)
+    ^               reduce using rule 88 (wireop -> | .)
+    |               reduce using rule 88 (wireop -> | .)
 
 
 state 155
 
-    (61) wireval -> { wireconcat } .
+    (89) wireop -> ^ .
 
-    ?               reduce using rule 61 (wireval -> { wireconcat } .)
-    +               reduce using rule 61 (wireval -> { wireconcat } .)
-    -               reduce using rule 61 (wireval -> { wireconcat } .)
-    *               reduce using rule 61 (wireval -> { wireconcat } .)
-    &               reduce using rule 61 (wireval -> { wireconcat } .)
-    |               reduce using rule 61 (wireval -> { wireconcat } .)
-    ^               reduce using rule 61 (wireval -> { wireconcat } .)
-    <               reduce using rule 61 (wireval -> { wireconcat } .)
-    >               reduce using rule 61 (wireval -> { wireconcat } .)
-    EQ              reduce using rule 61 (wireval -> { wireconcat } .)
-    GEQ             reduce using rule 61 (wireval -> { wireconcat } .)
-    LEQ             reduce using rule 61 (wireval -> { wireconcat } .)
-    ;               reduce using rule 61 (wireval -> { wireconcat } .)
-    ,               reduce using rule 61 (wireval -> { wireconcat } .)
-    }               reduce using rule 61 (wireval -> { wireconcat } .)
-    )               reduce using rule 61 (wireval -> { wireconcat } .)
-    :               reduce using rule 61 (wireval -> { wireconcat } .)
+    ALLHIGH         reduce using rule 89 (wireop -> ^ .)
+    ALLLOW          reduce using rule 89 (wireop -> ^ .)
+    LITWIRE         reduce using rule 89 (wireop -> ^ .)
+    {               reduce using rule 89 (wireop -> ^ .)
+    (               reduce using rule 89 (wireop -> ^ .)
+    ID              reduce using rule 89 (wireop -> ^ .)
+    NUMBER          reduce using rule 89 (wireop -> ^ .)
+    ~               reduce using rule 89 (wireop -> ^ .)
+    &               reduce using rule 89 (wireop -> ^ .)
+    ^               reduce using rule 89 (wireop -> ^ .)
+    |               reduce using rule 89 (wireop -> ^ .)
 
 
 state 156
 
-    (72) wireconcat -> wireexpr , . wireconcat
-    (71) wireconcat -> . wireexpr
-    (72) wireconcat -> . wireexpr , wireconcat
-    (55) wireexpr -> . wireval
-    (56) wireexpr -> . wireval wireop wireexpr
-    (57) wireexpr -> . wireval ? wireexpr : wireexpr
-    (58) wireval -> . ALLHIGH
-    (59) wireval -> . ALLLOW
-    (60) wireval -> . LITWIRE
-    (61) wireval -> . { wireconcat }
-    (62) wireval -> . ( wireexpr )
-    (63) wireval -> . ID [ arithexpr : arithexpr ]
-    (64) wireval -> . ID [ arithexpr ]
-    (65) wireval -> . unaop wireval
-    (70) wireval -> . ID
-    (66) unaop -> . ~
-    (67) unaop -> . &
-    (68) unaop -> . ^
-    (69) unaop -> . |
+    (90) wireop -> < .
 
-    ALLHIGH         shift and go to state 92
-    ALLLOW          shift and go to state 93
-    LITWIRE         shift and go to state 94
-    {               shift and go to state 95
-    (               shift and go to state 96
-    ID              shift and go to state 97
-    ~               shift and go to state 99
-    &               shift and go to state 100
-    ^               shift and go to state 101
-    |               shift and go to state 102
+    ALLHIGH         reduce using rule 90 (wireop -> < .)
+    ALLLOW          reduce using rule 90 (wireop -> < .)
+    LITWIRE         reduce using rule 90 (wireop -> < .)
+    {               reduce using rule 90 (wireop -> < .)
+    (               reduce using rule 90 (wireop -> < .)
+    ID              reduce using rule 90 (wireop -> < .)
+    NUMBER          reduce using rule 90 (wireop -> < .)
+    ~               reduce using rule 90 (wireop -> < .)
+    &               reduce using rule 90 (wireop -> < .)
+    ^               reduce using rule 90 (wireop -> < .)
+    |               reduce using rule 90 (wireop -> < .)
 
-    wireexpr                       shift and go to state 137
-    wireconcat                     shift and go to state 167
-    wireval                        shift and go to state 91
-    unaop                          shift and go to state 98
 
 state 157
 
-    (62) wireval -> ( wireexpr ) .
+    (91) wireop -> > .
 
-    ?               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    +               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    -               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    *               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    &               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    |               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    ^               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    <               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    >               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    EQ              reduce using rule 62 (wireval -> ( wireexpr ) .)
-    GEQ             reduce using rule 62 (wireval -> ( wireexpr ) .)
-    LEQ             reduce using rule 62 (wireval -> ( wireexpr ) .)
-    ;               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    ,               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    }               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    )               reduce using rule 62 (wireval -> ( wireexpr ) .)
-    :               reduce using rule 62 (wireval -> ( wireexpr ) .)
+    ALLHIGH         reduce using rule 91 (wireop -> > .)
+    ALLLOW          reduce using rule 91 (wireop -> > .)
+    LITWIRE         reduce using rule 91 (wireop -> > .)
+    {               reduce using rule 91 (wireop -> > .)
+    (               reduce using rule 91 (wireop -> > .)
+    ID              reduce using rule 91 (wireop -> > .)
+    NUMBER          reduce using rule 91 (wireop -> > .)
+    ~               reduce using rule 91 (wireop -> > .)
+    &               reduce using rule 91 (wireop -> > .)
+    ^               reduce using rule 91 (wireop -> > .)
+    |               reduce using rule 91 (wireop -> > .)
 
 
 state 158
 
-    (63) wireval -> ID [ arithexpr . : arithexpr ]
-    (64) wireval -> ID [ arithexpr . ]
+    (92) wireop -> LSHIFT .
 
-    :               shift and go to state 168
-    ]               shift and go to state 169
+    ALLHIGH         reduce using rule 92 (wireop -> LSHIFT .)
+    ALLLOW          reduce using rule 92 (wireop -> LSHIFT .)
+    LITWIRE         reduce using rule 92 (wireop -> LSHIFT .)
+    {               reduce using rule 92 (wireop -> LSHIFT .)
+    (               reduce using rule 92 (wireop -> LSHIFT .)
+    ID              reduce using rule 92 (wireop -> LSHIFT .)
+    NUMBER          reduce using rule 92 (wireop -> LSHIFT .)
+    ~               reduce using rule 92 (wireop -> LSHIFT .)
+    &               reduce using rule 92 (wireop -> LSHIFT .)
+    ^               reduce using rule 92 (wireop -> LSHIFT .)
+    |               reduce using rule 92 (wireop -> LSHIFT .)
 
 
 state 159
 
-    (51) lhs -> ID [ arithexpr : arithexpr . ]
+    (93) wireop -> RSHIFT .
 
-    ]               shift and go to state 170
+    ALLHIGH         reduce using rule 93 (wireop -> RSHIFT .)
+    ALLLOW          reduce using rule 93 (wireop -> RSHIFT .)
+    LITWIRE         reduce using rule 93 (wireop -> RSHIFT .)
+    {               reduce using rule 93 (wireop -> RSHIFT .)
+    (               reduce using rule 93 (wireop -> RSHIFT .)
+    ID              reduce using rule 93 (wireop -> RSHIFT .)
+    NUMBER          reduce using rule 93 (wireop -> RSHIFT .)
+    ~               reduce using rule 93 (wireop -> RSHIFT .)
+    &               reduce using rule 93 (wireop -> RSHIFT .)
+    ^               reduce using rule 93 (wireop -> RSHIFT .)
+    |               reduce using rule 93 (wireop -> RSHIFT .)
 
 
 state 160
 
-    (36) sensitivity -> ( edge ID ) .
+    (94) wireop -> EQ .
 
-    BEGIN           reduce using rule 36 (sensitivity -> ( edge ID ) .)
+    ALLHIGH         reduce using rule 94 (wireop -> EQ .)
+    ALLLOW          reduce using rule 94 (wireop -> EQ .)
+    LITWIRE         reduce using rule 94 (wireop -> EQ .)
+    {               reduce using rule 94 (wireop -> EQ .)
+    (               reduce using rule 94 (wireop -> EQ .)
+    ID              reduce using rule 94 (wireop -> EQ .)
+    NUMBER          reduce using rule 94 (wireop -> EQ .)
+    ~               reduce using rule 94 (wireop -> EQ .)
+    &               reduce using rule 94 (wireop -> EQ .)
+    ^               reduce using rule 94 (wireop -> EQ .)
+    |               reduce using rule 94 (wireop -> EQ .)
 
 
 state 161
 
-    (48) elseblock -> ELSE ifblock elseblock .
+    (95) wireop -> GEQ .
 
-    IF              reduce using rule 48 (elseblock -> ELSE ifblock elseblock .)
-    ID              reduce using rule 48 (elseblock -> ELSE ifblock elseblock .)
-    {               reduce using rule 48 (elseblock -> ELSE ifblock elseblock .)
-    END             reduce using rule 48 (elseblock -> ELSE ifblock elseblock .)
+    ALLHIGH         reduce using rule 95 (wireop -> GEQ .)
+    ALLLOW          reduce using rule 95 (wireop -> GEQ .)
+    LITWIRE         reduce using rule 95 (wireop -> GEQ .)
+    {               reduce using rule 95 (wireop -> GEQ .)
+    (               reduce using rule 95 (wireop -> GEQ .)
+    ID              reduce using rule 95 (wireop -> GEQ .)
+    NUMBER          reduce using rule 95 (wireop -> GEQ .)
+    ~               reduce using rule 95 (wireop -> GEQ .)
+    &               reduce using rule 95 (wireop -> GEQ .)
+    ^               reduce using rule 95 (wireop -> GEQ .)
+    |               reduce using rule 95 (wireop -> GEQ .)
 
 
 state 162
 
-    (49) elseblock -> ELSE BEGIN alwayscont . END
+    (96) wireop -> LEQ .
 
-    END             shift and go to state 171
+    ALLHIGH         reduce using rule 96 (wireop -> LEQ .)
+    ALLLOW          reduce using rule 96 (wireop -> LEQ .)
+    LITWIRE         reduce using rule 96 (wireop -> LEQ .)
+    {               reduce using rule 96 (wireop -> LEQ .)
+    (               reduce using rule 96 (wireop -> LEQ .)
+    ID              reduce using rule 96 (wireop -> LEQ .)
+    NUMBER          reduce using rule 96 (wireop -> LEQ .)
+    ~               reduce using rule 96 (wireop -> LEQ .)
+    &               reduce using rule 96 (wireop -> LEQ .)
+    ^               reduce using rule 96 (wireop -> LEQ .)
+    |               reduce using rule 96 (wireop -> LEQ .)
 
 
 state 163
 
-    (46) ifblock -> IF ( wireexpr ) . BEGIN alwayscont END
+    (72) wireval -> { wireconcat . }
 
-    BEGIN           shift and go to state 172
+    }               shift and go to state 185
 
 
 state 164
 
-    (18) oneport -> inouttype [ arithexpr : arithexpr ] ID .
+    (82) wireconcat -> wireexpr .
+    (83) wireconcat -> wireexpr . , wireconcat
 
-    ,               reduce using rule 18 (oneport -> inouttype [ arithexpr : arithexpr ] ID .)
-    )               reduce using rule 18 (oneport -> inouttype [ arithexpr : arithexpr ] ID .)
+    }               reduce using rule 82 (wireconcat -> wireexpr .)
+    ,               shift and go to state 186
 
 
 state 165
 
-    (27) wiredec -> wiretype [ arithexpr : arithexpr ] ID .
+    (76) wireval -> unaop wireval .
 
-    ;               reduce using rule 27 (wiredec -> wiretype [ arithexpr : arithexpr ] ID .)
+    ?               reduce using rule 76 (wireval -> unaop wireval .)
+    +               reduce using rule 76 (wireval -> unaop wireval .)
+    -               reduce using rule 76 (wireval -> unaop wireval .)
+    *               reduce using rule 76 (wireval -> unaop wireval .)
+    &               reduce using rule 76 (wireval -> unaop wireval .)
+    |               reduce using rule 76 (wireval -> unaop wireval .)
+    ^               reduce using rule 76 (wireval -> unaop wireval .)
+    <               reduce using rule 76 (wireval -> unaop wireval .)
+    >               reduce using rule 76 (wireval -> unaop wireval .)
+    LSHIFT          reduce using rule 76 (wireval -> unaop wireval .)
+    RSHIFT          reduce using rule 76 (wireval -> unaop wireval .)
+    EQ              reduce using rule 76 (wireval -> unaop wireval .)
+    GEQ             reduce using rule 76 (wireval -> unaop wireval .)
+    LEQ             reduce using rule 76 (wireval -> unaop wireval .)
+    ,               reduce using rule 76 (wireval -> unaop wireval .)
+    )               reduce using rule 76 (wireval -> unaop wireval .)
+    ;               reduce using rule 76 (wireval -> unaop wireval .)
+    }               reduce using rule 76 (wireval -> unaop wireval .)
+    ]               reduce using rule 76 (wireval -> unaop wireval .)
+    :               reduce using rule 76 (wireval -> unaop wireval .)
 
 
 state 166
 
-    (57) wireexpr -> wireval ? wireexpr : . wireexpr
-    (55) wireexpr -> . wireval
-    (56) wireexpr -> . wireval wireop wireexpr
-    (57) wireexpr -> . wireval ? wireexpr : wireexpr
-    (58) wireval -> . ALLHIGH
-    (59) wireval -> . ALLLOW
-    (60) wireval -> . LITWIRE
-    (61) wireval -> . { wireconcat }
-    (62) wireval -> . ( wireexpr )
-    (63) wireval -> . ID [ arithexpr : arithexpr ]
-    (64) wireval -> . ID [ arithexpr ]
-    (65) wireval -> . unaop wireval
-    (70) wireval -> . ID
-    (66) unaop -> . ~
-    (67) unaop -> . &
-    (68) unaop -> . ^
-    (69) unaop -> . |
+    (32) wiredec -> wiretype [ arithexpr : arithexpr . ] idassigns
+    (33) wiredec -> wiretype [ arithexpr : arithexpr . ] ID [ arithexpr : arithexpr ]
 
-    ALLHIGH         shift and go to state 92
-    ALLLOW          shift and go to state 93
-    LITWIRE         shift and go to state 94
-    {               shift and go to state 95
-    (               shift and go to state 96
-    ID              shift and go to state 97
-    ~               shift and go to state 99
-    &               shift and go to state 100
-    ^               shift and go to state 101
-    |               shift and go to state 102
+    ]               shift and go to state 187
 
-    wireval                        shift and go to state 91
-    wireexpr                       shift and go to state 173
-    unaop                          shift and go to state 98
 
 state 167
 
-    (72) wireconcat -> wireexpr , wireconcat .
+    (61) lhs -> ID [ arithexpr : . arithexpr ]
+    (11) arithexpr -> . NUMBER
 
-    }               reduce using rule 72 (wireconcat -> wireexpr , wireconcat .)
+    NUMBER          shift and go to state 71
 
+    arithexpr                      shift and go to state 188
 
 state 168
 
-    (63) wireval -> ID [ arithexpr : . arithexpr ]
-    (11) arithexpr -> . NUMBER
+    (64) lhsconcat -> lhs , lhsconcat .
 
-    NUMBER          shift and go to state 67
+    }               reduce using rule 64 (lhsconcat -> lhs , lhsconcat .)
 
-    arithexpr                      shift and go to state 174
 
 state 169
 
-    (64) wireval -> ID [ arithexpr ] .
+    (46) sensitivity -> ( edge ID . )
 
-    ?               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    +               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    -               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    *               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    &               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    |               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    ^               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    <               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    >               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    EQ              reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    GEQ             reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    LEQ             reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    ;               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    ,               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    }               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    )               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
-    :               reduce using rule 64 (wireval -> ID [ arithexpr ] .)
+    )               shift and go to state 189
 
 
 state 170
 
-    (51) lhs -> ID [ arithexpr : arithexpr ] .
+    (50) alwayscont -> oneassign ; alwayscont .
 
-    =               reduce using rule 51 (lhs -> ID [ arithexpr : arithexpr ] .)
-    ,               reduce using rule 51 (lhs -> ID [ arithexpr : arithexpr ] .)
-    }               reduce using rule 51 (lhs -> ID [ arithexpr : arithexpr ] .)
-    NONBLOCK        reduce using rule 51 (lhs -> ID [ arithexpr : arithexpr ] .)
+    END             reduce using rule 50 (alwayscont -> oneassign ; alwayscont .)
 
 
 state 171
 
-    (49) elseblock -> ELSE BEGIN alwayscont END .
+    (52) alwayscont -> ifblock elseblock alwayscont .
 
-    IF              reduce using rule 49 (elseblock -> ELSE BEGIN alwayscont END .)
-    ID              reduce using rule 49 (elseblock -> ELSE BEGIN alwayscont END .)
-    {               reduce using rule 49 (elseblock -> ELSE BEGIN alwayscont END .)
-    END             reduce using rule 49 (elseblock -> ELSE BEGIN alwayscont END .)
+    END             reduce using rule 52 (alwayscont -> ifblock elseblock alwayscont .)
 
 
 state 172
 
-    (46) ifblock -> IF ( wireexpr ) BEGIN . alwayscont END
-    (40) alwayscont -> . oneassign ; alwayscont
-    (41) alwayscont -> . ifblock alwayscont
-    (42) alwayscont -> . ifblock elseblock alwayscont
-    (43) alwayscont -> . empty
-    (44) oneassign -> . lhs = wireexpr
-    (45) oneassign -> . lhs NONBLOCK wireexpr
-    (46) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
-    (84) empty -> .
-    (50) lhs -> . ID
-    (51) lhs -> . ID [ arithexpr : arithexpr ]
-    (52) lhs -> . { lhsconcat }
+    (57) elseblock -> ELSE ifblock .
+    (58) elseblock -> ELSE ifblock . elseblock
+    (57) elseblock -> . ELSE ifblock
+    (58) elseblock -> . ELSE ifblock elseblock
+    (59) elseblock -> . ELSE BEGIN alwayscont END
 
-    IF              shift and go to state 84
-    END             reduce using rule 84 (empty -> .)
-    ID              shift and go to state 54
-    {               shift and go to state 55
+    IF              reduce using rule 57 (elseblock -> ELSE ifblock .)
+    ID              reduce using rule 57 (elseblock -> ELSE ifblock .)
+    {               reduce using rule 57 (elseblock -> ELSE ifblock .)
+    END             reduce using rule 57 (elseblock -> ELSE ifblock .)
+    ELSE            shift and go to state 134
 
-    alwayscont                     shift and go to state 175
-    oneassign                      shift and go to state 80
-    ifblock                        shift and go to state 81
-    empty                          shift and go to state 82
-    lhs                            shift and go to state 83
+    elseblock                      shift and go to state 190
 
 state 173
 
-    (57) wireexpr -> wireval ? wireexpr : wireexpr .
+    (59) elseblock -> ELSE BEGIN . alwayscont END
+    (50) alwayscont -> . oneassign ; alwayscont
+    (51) alwayscont -> . ifblock alwayscont
+    (52) alwayscont -> . ifblock elseblock alwayscont
+    (53) alwayscont -> . empty
+    (54) oneassign -> . lhs = wireexpr
+    (55) oneassign -> . lhs NONBLOCK wireexpr
+    (56) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
+    (103) empty -> .
+    (60) lhs -> . ID
+    (61) lhs -> . ID [ arithexpr : arithexpr ]
+    (62) lhs -> . { lhsconcat }
 
-    ;               reduce using rule 57 (wireexpr -> wireval ? wireexpr : wireexpr .)
-    ,               reduce using rule 57 (wireexpr -> wireval ? wireexpr : wireexpr .)
-    }               reduce using rule 57 (wireexpr -> wireval ? wireexpr : wireexpr .)
-    )               reduce using rule 57 (wireexpr -> wireval ? wireexpr : wireexpr .)
-    :               reduce using rule 57 (wireexpr -> wireval ? wireexpr : wireexpr .)
+    IF              shift and go to state 92
+    END             reduce using rule 103 (empty -> .)
+    ID              shift and go to state 57
+    {               shift and go to state 58
 
+    alwayscont                     shift and go to state 191
+    oneassign                      shift and go to state 88
+    ifblock                        shift and go to state 89
+    empty                          shift and go to state 90
+    lhs                            shift and go to state 91
 
 state 174
 
-    (63) wireval -> ID [ arithexpr : arithexpr . ]
+    (54) oneassign -> lhs = wireexpr .
 
-    ]               shift and go to state 176
+    ;               reduce using rule 54 (oneassign -> lhs = wireexpr .)
 
 
 state 175
 
-    (46) ifblock -> IF ( wireexpr ) BEGIN alwayscont . END
+    (55) oneassign -> lhs NONBLOCK wireexpr .
 
-    END             shift and go to state 177
+    ;               reduce using rule 55 (oneassign -> lhs NONBLOCK wireexpr .)
 
 
 state 176
 
-    (63) wireval -> ID [ arithexpr : arithexpr ] .
+    (56) ifblock -> IF ( wireexpr . ) BEGIN alwayscont END
 
-    ?               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    +               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    -               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    *               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    &               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    |               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    ^               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    <               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    >               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    EQ              reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    GEQ             reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    LEQ             reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    ;               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    ,               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    }               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    )               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
-    :               reduce using rule 63 (wireval -> ID [ arithexpr : arithexpr ] .)
+    )               shift and go to state 192
 
 
 state 177
 
-    (46) ifblock -> IF ( wireexpr ) BEGIN alwayscont END .
+    (21) wireslice -> [ arithexpr : arithexpr ] .
 
-    ELSE            reduce using rule 46 (ifblock -> IF ( wireexpr ) BEGIN alwayscont END .)
-    IF              reduce using rule 46 (ifblock -> IF ( wireexpr ) BEGIN alwayscont END .)
-    ID              reduce using rule 46 (ifblock -> IF ( wireexpr ) BEGIN alwayscont END .)
-    {               reduce using rule 46 (ifblock -> IF ( wireexpr ) BEGIN alwayscont END .)
-    END             reduce using rule 46 (ifblock -> IF ( wireexpr ) BEGIN alwayscont END .)
+    ID              reduce using rule 21 (wireslice -> [ arithexpr : arithexpr ] .)
+
+
+state 178
+
+    (74) wireval -> ID [ arithexpr . : arithexpr ]
+    (71) wireval -> arithexpr .
+
+    :               shift and go to state 193
+    ?               reduce using rule 71 (wireval -> arithexpr .)
+    +               reduce using rule 71 (wireval -> arithexpr .)
+    -               reduce using rule 71 (wireval -> arithexpr .)
+    *               reduce using rule 71 (wireval -> arithexpr .)
+    &               reduce using rule 71 (wireval -> arithexpr .)
+    |               reduce using rule 71 (wireval -> arithexpr .)
+    ^               reduce using rule 71 (wireval -> arithexpr .)
+    <               reduce using rule 71 (wireval -> arithexpr .)
+    >               reduce using rule 71 (wireval -> arithexpr .)
+    LSHIFT          reduce using rule 71 (wireval -> arithexpr .)
+    RSHIFT          reduce using rule 71 (wireval -> arithexpr .)
+    EQ              reduce using rule 71 (wireval -> arithexpr .)
+    GEQ             reduce using rule 71 (wireval -> arithexpr .)
+    LEQ             reduce using rule 71 (wireval -> arithexpr .)
+    ]               reduce using rule 71 (wireval -> arithexpr .)
+
+
+state 179
+
+    (75) wireval -> ID [ wireexpr . ]
+
+    ]               shift and go to state 194
+
+
+state 180
+
+    (73) wireval -> ( wireexpr ) .
+
+    ?               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    +               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    -               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    *               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    &               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    |               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    ^               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    <               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    >               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    LSHIFT          reduce using rule 73 (wireval -> ( wireexpr ) .)
+    RSHIFT          reduce using rule 73 (wireval -> ( wireexpr ) .)
+    EQ              reduce using rule 73 (wireval -> ( wireexpr ) .)
+    GEQ             reduce using rule 73 (wireval -> ( wireexpr ) .)
+    LEQ             reduce using rule 73 (wireval -> ( wireexpr ) .)
+    ,               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    )               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    ;               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    }               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    ]               reduce using rule 73 (wireval -> ( wireexpr ) .)
+    :               reduce using rule 73 (wireval -> ( wireexpr ) .)
+
+
+state 181
+
+    (99) modportassign -> oneportassign , modportassign .
+
+    )               reduce using rule 99 (modportassign -> oneportassign , modportassign .)
+
+
+state 182
+
+    (102) oneportassign -> . ID ( . wireexpr )
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
+
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
+
+    wireexpr                       shift and go to state 195
+    wireval                        shift and go to state 107
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
+
+state 183
+
+    (66) wireexpr -> wireval wireop wireexpr .
+
+    ,               reduce using rule 66 (wireexpr -> wireval wireop wireexpr .)
+    )               reduce using rule 66 (wireexpr -> wireval wireop wireexpr .)
+    ;               reduce using rule 66 (wireexpr -> wireval wireop wireexpr .)
+    }               reduce using rule 66 (wireexpr -> wireval wireop wireexpr .)
+    ]               reduce using rule 66 (wireexpr -> wireval wireop wireexpr .)
+    :               reduce using rule 66 (wireexpr -> wireval wireop wireexpr .)
+
+
+state 184
+
+    (67) wireexpr -> wireval ? wireexpr . : wireexpr
+
+    :               shift and go to state 196
+
+
+state 185
+
+    (72) wireval -> { wireconcat } .
+
+    ?               reduce using rule 72 (wireval -> { wireconcat } .)
+    +               reduce using rule 72 (wireval -> { wireconcat } .)
+    -               reduce using rule 72 (wireval -> { wireconcat } .)
+    *               reduce using rule 72 (wireval -> { wireconcat } .)
+    &               reduce using rule 72 (wireval -> { wireconcat } .)
+    |               reduce using rule 72 (wireval -> { wireconcat } .)
+    ^               reduce using rule 72 (wireval -> { wireconcat } .)
+    <               reduce using rule 72 (wireval -> { wireconcat } .)
+    >               reduce using rule 72 (wireval -> { wireconcat } .)
+    LSHIFT          reduce using rule 72 (wireval -> { wireconcat } .)
+    RSHIFT          reduce using rule 72 (wireval -> { wireconcat } .)
+    EQ              reduce using rule 72 (wireval -> { wireconcat } .)
+    GEQ             reduce using rule 72 (wireval -> { wireconcat } .)
+    LEQ             reduce using rule 72 (wireval -> { wireconcat } .)
+    ,               reduce using rule 72 (wireval -> { wireconcat } .)
+    )               reduce using rule 72 (wireval -> { wireconcat } .)
+    ;               reduce using rule 72 (wireval -> { wireconcat } .)
+    }               reduce using rule 72 (wireval -> { wireconcat } .)
+    ]               reduce using rule 72 (wireval -> { wireconcat } .)
+    :               reduce using rule 72 (wireval -> { wireconcat } .)
+
+
+state 186
+
+    (83) wireconcat -> wireexpr , . wireconcat
+    (82) wireconcat -> . wireexpr
+    (83) wireconcat -> . wireexpr , wireconcat
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
+
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
+
+    wireexpr                       shift and go to state 164
+    wireconcat                     shift and go to state 197
+    wireval                        shift and go to state 107
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
+
+state 187
+
+    (32) wiredec -> wiretype [ arithexpr : arithexpr ] . idassigns
+    (33) wiredec -> wiretype [ arithexpr : arithexpr ] . ID [ arithexpr : arithexpr ]
+    (35) idassigns -> . oneidassign
+    (36) idassigns -> . oneidassign , idassigns
+    (37) oneidassign -> . ID
+    (38) oneidassign -> . ID = wireexpr
+
+    ID              shift and go to state 199
+
+    idassigns                      shift and go to state 198
+    oneidassign                    shift and go to state 55
+
+state 188
+
+    (61) lhs -> ID [ arithexpr : arithexpr . ]
+
+    ]               shift and go to state 200
+
+
+state 189
+
+    (46) sensitivity -> ( edge ID ) .
+
+    BEGIN           reduce using rule 46 (sensitivity -> ( edge ID ) .)
+
+
+state 190
+
+    (58) elseblock -> ELSE ifblock elseblock .
+
+    IF              reduce using rule 58 (elseblock -> ELSE ifblock elseblock .)
+    ID              reduce using rule 58 (elseblock -> ELSE ifblock elseblock .)
+    {               reduce using rule 58 (elseblock -> ELSE ifblock elseblock .)
+    END             reduce using rule 58 (elseblock -> ELSE ifblock elseblock .)
+
+
+state 191
+
+    (59) elseblock -> ELSE BEGIN alwayscont . END
+
+    END             shift and go to state 201
+
+
+state 192
+
+    (56) ifblock -> IF ( wireexpr ) . BEGIN alwayscont END
+
+    BEGIN           shift and go to state 202
+
+
+state 193
+
+    (74) wireval -> ID [ arithexpr : . arithexpr ]
+    (11) arithexpr -> . NUMBER
+
+    NUMBER          shift and go to state 71
+
+    arithexpr                      shift and go to state 203
+
+state 194
+
+    (75) wireval -> ID [ wireexpr ] .
+
+    ?               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    +               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    -               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    *               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    &               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    |               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    ^               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    <               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    >               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    LSHIFT          reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    RSHIFT          reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    EQ              reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    GEQ             reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    LEQ             reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    ,               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    )               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    ;               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    }               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    ]               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+    :               reduce using rule 75 (wireval -> ID [ wireexpr ] .)
+
+
+state 195
+
+    (102) oneportassign -> . ID ( wireexpr . )
+
+    )               shift and go to state 204
+
+
+state 196
+
+    (67) wireexpr -> wireval ? wireexpr : . wireexpr
+    (65) wireexpr -> . wireval
+    (66) wireexpr -> . wireval wireop wireexpr
+    (67) wireexpr -> . wireval ? wireexpr : wireexpr
+    (68) wireval -> . ALLHIGH
+    (69) wireval -> . ALLLOW
+    (70) wireval -> . LITWIRE
+    (71) wireval -> . arithexpr
+    (72) wireval -> . { wireconcat }
+    (73) wireval -> . ( wireexpr )
+    (74) wireval -> . ID [ arithexpr : arithexpr ]
+    (75) wireval -> . ID [ wireexpr ]
+    (76) wireval -> . unaop wireval
+    (81) wireval -> . ID
+    (11) arithexpr -> . NUMBER
+    (77) unaop -> . ~
+    (78) unaop -> . &
+    (79) unaop -> . ^
+    (80) unaop -> . |
+
+    ALLHIGH         shift and go to state 108
+    ALLLOW          shift and go to state 109
+    LITWIRE         shift and go to state 110
+    {               shift and go to state 112
+    (               shift and go to state 101
+    ID              shift and go to state 100
+    NUMBER          shift and go to state 71
+    ~               shift and go to state 114
+    &               shift and go to state 115
+    ^               shift and go to state 116
+    |               shift and go to state 117
+
+    wireval                        shift and go to state 107
+    wireexpr                       shift and go to state 205
+    arithexpr                      shift and go to state 111
+    unaop                          shift and go to state 113
+
+state 197
+
+    (83) wireconcat -> wireexpr , wireconcat .
+
+    }               reduce using rule 83 (wireconcat -> wireexpr , wireconcat .)
+
+
+state 198
+
+    (32) wiredec -> wiretype [ arithexpr : arithexpr ] idassigns .
+
+    ;               reduce using rule 32 (wiredec -> wiretype [ arithexpr : arithexpr ] idassigns .)
+
+
+state 199
+
+    (33) wiredec -> wiretype [ arithexpr : arithexpr ] ID . [ arithexpr : arithexpr ]
+    (37) oneidassign -> ID .
+    (38) oneidassign -> ID . = wireexpr
+
+    [               shift and go to state 206
+    ,               reduce using rule 37 (oneidassign -> ID .)
+    ;               reduce using rule 37 (oneidassign -> ID .)
+    =               shift and go to state 78
+
+
+state 200
+
+    (61) lhs -> ID [ arithexpr : arithexpr ] .
+
+    =               reduce using rule 61 (lhs -> ID [ arithexpr : arithexpr ] .)
+    ,               reduce using rule 61 (lhs -> ID [ arithexpr : arithexpr ] .)
+    }               reduce using rule 61 (lhs -> ID [ arithexpr : arithexpr ] .)
+    NONBLOCK        reduce using rule 61 (lhs -> ID [ arithexpr : arithexpr ] .)
+
+
+state 201
+
+    (59) elseblock -> ELSE BEGIN alwayscont END .
+
+    IF              reduce using rule 59 (elseblock -> ELSE BEGIN alwayscont END .)
+    ID              reduce using rule 59 (elseblock -> ELSE BEGIN alwayscont END .)
+    {               reduce using rule 59 (elseblock -> ELSE BEGIN alwayscont END .)
+    END             reduce using rule 59 (elseblock -> ELSE BEGIN alwayscont END .)
+
+
+state 202
+
+    (56) ifblock -> IF ( wireexpr ) BEGIN . alwayscont END
+    (50) alwayscont -> . oneassign ; alwayscont
+    (51) alwayscont -> . ifblock alwayscont
+    (52) alwayscont -> . ifblock elseblock alwayscont
+    (53) alwayscont -> . empty
+    (54) oneassign -> . lhs = wireexpr
+    (55) oneassign -> . lhs NONBLOCK wireexpr
+    (56) ifblock -> . IF ( wireexpr ) BEGIN alwayscont END
+    (103) empty -> .
+    (60) lhs -> . ID
+    (61) lhs -> . ID [ arithexpr : arithexpr ]
+    (62) lhs -> . { lhsconcat }
+
+    IF              shift and go to state 92
+    END             reduce using rule 103 (empty -> .)
+    ID              shift and go to state 57
+    {               shift and go to state 58
+
+    alwayscont                     shift and go to state 207
+    oneassign                      shift and go to state 88
+    ifblock                        shift and go to state 89
+    empty                          shift and go to state 90
+    lhs                            shift and go to state 91
+
+state 203
+
+    (74) wireval -> ID [ arithexpr : arithexpr . ]
+
+    ]               shift and go to state 208
+
+
+state 204
+
+    (102) oneportassign -> . ID ( wireexpr ) .
+
+    ,               reduce using rule 102 (oneportassign -> . ID ( wireexpr ) .)
+    )               reduce using rule 102 (oneportassign -> . ID ( wireexpr ) .)
+
+
+state 205
+
+    (67) wireexpr -> wireval ? wireexpr : wireexpr .
+
+    ,               reduce using rule 67 (wireexpr -> wireval ? wireexpr : wireexpr .)
+    )               reduce using rule 67 (wireexpr -> wireval ? wireexpr : wireexpr .)
+    ;               reduce using rule 67 (wireexpr -> wireval ? wireexpr : wireexpr .)
+    }               reduce using rule 67 (wireexpr -> wireval ? wireexpr : wireexpr .)
+    ]               reduce using rule 67 (wireexpr -> wireval ? wireexpr : wireexpr .)
+    :               reduce using rule 67 (wireexpr -> wireval ? wireexpr : wireexpr .)
+
+
+state 206
+
+    (33) wiredec -> wiretype [ arithexpr : arithexpr ] ID [ . arithexpr : arithexpr ]
+    (11) arithexpr -> . NUMBER
+
+    NUMBER          shift and go to state 71
+
+    arithexpr                      shift and go to state 209
+
+state 207
+
+    (56) ifblock -> IF ( wireexpr ) BEGIN alwayscont . END
+
+    END             shift and go to state 210
+
+
+state 208
+
+    (74) wireval -> ID [ arithexpr : arithexpr ] .
+
+    ?               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    +               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    -               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    *               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    &               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    |               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    ^               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    <               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    >               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    LSHIFT          reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    RSHIFT          reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    EQ              reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    GEQ             reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    LEQ             reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    ,               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    )               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    ;               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    }               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    ]               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+    :               reduce using rule 74 (wireval -> ID [ arithexpr : arithexpr ] .)
+
+
+state 209
+
+    (33) wiredec -> wiretype [ arithexpr : arithexpr ] ID [ arithexpr . : arithexpr ]
+
+    :               shift and go to state 211
+
+
+state 210
+
+    (56) ifblock -> IF ( wireexpr ) BEGIN alwayscont END .
+
+    ELSE            reduce using rule 56 (ifblock -> IF ( wireexpr ) BEGIN alwayscont END .)
+    IF              reduce using rule 56 (ifblock -> IF ( wireexpr ) BEGIN alwayscont END .)
+    ID              reduce using rule 56 (ifblock -> IF ( wireexpr ) BEGIN alwayscont END .)
+    {               reduce using rule 56 (ifblock -> IF ( wireexpr ) BEGIN alwayscont END .)
+    END             reduce using rule 56 (ifblock -> IF ( wireexpr ) BEGIN alwayscont END .)
+
+
+state 211
+
+    (33) wiredec -> wiretype [ arithexpr : arithexpr ] ID [ arithexpr : . arithexpr ]
+    (11) arithexpr -> . NUMBER
+
+    NUMBER          shift and go to state 71
+
+    arithexpr                      shift and go to state 212
+
+state 212
+
+    (33) wiredec -> wiretype [ arithexpr : arithexpr ] ID [ arithexpr : arithexpr . ]
+
+    ]               shift and go to state 213
+
+
+state 213
+
+    (33) wiredec -> wiretype [ arithexpr : arithexpr ] ID [ arithexpr : arithexpr ] .
+
+    ;               reduce using rule 33 (wiredec -> wiretype [ arithexpr : arithexpr ] ID [ arithexpr : arithexpr ] .)
 

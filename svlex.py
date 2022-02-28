@@ -19,7 +19,7 @@ _tokens = [
 
 # Regular expression rules for simple tokens
 
-literals = r"+-(){}[]*/;:,=?<>@~#&|^"
+literals = r"+-(){}[]*/;:,=?<>@~#&|^."
 
 t_NONBLOCK = "<="
 t_GEQ = ">="

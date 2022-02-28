@@ -1,5 +1,4 @@
 # Yacc example
-
 from numpy import isin
 import ply.yacc as yacc
 
@@ -92,7 +91,7 @@ def p_arithexpr(p):
 
 def p_portdec(p):
     """
-    portdec : '(' ports ')'
+    portdec : '(' ports 
     """
     p[0] = p[2]
     return 
@@ -100,43 +99,76 @@ def p_portdec(p):
 
 def p_ports(p):
     """
-    ports : oneport portplus 
-          | empty
+    ports : porttype  portplus
+          | ')'
     """
     if len(p) == 3:
-        p[0] = p[2].addPort(p[1])
+        uno, dos, tres = p[2]
+        types, slices, ids = [p[1]] + uno, dos, tres
+        inst = Port()
+        for t, slice, idlist in zip(types, slices, ids):
+            for i in idlist:
+                po = OnePort(t, i) if slice is None else OnePort(t, i, slice[0], slice[1])
+                inst.addPort(po)
+
+        p[0] = inst
+
     else:
         p[0] = Port()
 
 def p_portplus(p):
     """
-    portplus : ',' oneport portplus 
+    portplus : wireslice idsterminal portplus 
              | empty
     """
     if len(p) == 4:
-        p[0] = p[3].addPort(p[2])
+        uno, dos, tres = p[3]
+        newids, termtype = p[2]
+        p[0] = [[termtype] + uno, [p[1]] + dos, [newids] + tres]
     else:
-        p[0] = Port()
+        # type, slice, ids
+        p[0] = [[], [], []]
 
-def p_oneport(p):
+
+def p_idsterminal(p):
     """
-    oneport : inouttype ID
-            | inouttype '[' arithexpr ':' arithexpr ']' ID
+    idsterminal : ID portterminal
+                | ID ',' idsterminal
     """
     if len(p) == 3:
-        p[0] = OnePort(p[1], p[2])
+        p[0] = [[p[1]], p[2]]
     else:
-        p[0] = OnePort(p[1], p[7], msb=p[3], lsb=p[5])
+        uno, dos = p[3]
+        p[0] = [[p[1]] + uno, dos]
 
-    return
-    
 
-def p_inouttype(p):
+def p_portterminal(p):
     """
-    inouttype : INPUT
-              | OUTPUT
-              | INPUT wiretype
-              | OUTPUT wiretype
+    portterminal : ')'
+                 | ',' porttype
+    """
+    if len(p) == 2:
+        p[0] = None 
+    else:
+        p[0] = p[2]
+
+
+def p_wireslice(p):
+    """
+    wireslice : '[' arithexpr ':' arithexpr ']'
+              | empty
+    """
+    if len(p) == 6:
+        p[0] = (p[2], p[4])
+    else:
+        assert len(p) == 2
+        p[0] = None
+
+
+def p_porttype(p):
+    """
+    porttype : inout
+             | inout wiretype
     """
     if len(p) == 2:
         p[0] = PortType(portInoutInvTable[p[1]])
@@ -146,19 +178,35 @@ def p_inouttype(p):
     return
 
 
+def p_inout(p):
+    """
+    inout : INPUT
+          | OUTPUT
+    """
+    p[0] = p[1]
+
+
 def p_modulecontent(p):
     """
     modulecontent : wiredec ';' modulecontent
                   | assign ';' modulecontent
                   | always modulecontent
+                  | moduleinst ';' modulecontent
                   | empty
     """
-    if isinstance(p[1], Wiredec):
-        p[0] = p[3].addWiredec(p[1])
+    if isinstance(p[1], list):
+        for i in p[1]:
+            if isinstance(i, Wiredec):
+                p[0] = p[3].addWiredec(i)
+            else:
+                assert isinstance(i, Assign)
+                p[0] = p[3].addAssign(i)
     elif isinstance(p[1], Assign):
         p[0] = p[3].addAssign(p[1])
     elif isinstance(p[1], Always):
         p[0] = p[2].addAlways(p[1])
+    elif p[1] is None and len(p) == 4:
+        p[0] = p[3]
     else:
         assert len(p) == 2
         p[0] = ModuleContent()
@@ -166,14 +214,57 @@ def p_modulecontent(p):
 
 def p_wiredec(p):
     """
-    wiredec : wiretype '[' arithexpr ':' arithexpr ']' ID
-            | wiretype ID
+    wiredec : wiretype '[' arithexpr ':' arithexpr ']' idassigns
+            | wiretype '[' arithexpr ':' arithexpr ']' ID '[' arithexpr ':' arithexpr ']'
+            | wiretype idassigns
     """
     if len(p) == 8:
-        p[0] = Wiredec(p[7], p[1], p[3], p[5])
+        lst = []
+        for i in p[7]:
+            name, rhsval = i 
+            if rhsval is not None:
+                lhs = Lhs(LhsType.ID, name)
+                assignObj = Assign(lhs, rhsval)
+                lst += [assignObj]
+            lst += [Wiredec(name, p[1], p[3], p[5])]
+        p[0] = lst
+    elif len(p) == 13:
+        p[0] = [Wiredec(p[7], p[1], p[9], p[11])]
     else:
         assert len(p) == 3
-        p[0] = Wiredec(p[2], p[1])
+        lst = []
+        for i in p[2]:
+            name, rhsval = i 
+            if rhsval is not None:
+                lhs = Lhs(LhsType.ID, name)
+                assignObj = Assign(lhs, rhsval)
+                lst += [assignObj]
+            lst += [Wiredec(name, p[1])]
+        p[0] = lst
+
+
+def p_ids(p):
+    """
+    idassigns : oneidassign 
+              | oneidassign ',' idassigns
+    """
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[3] + [p[1]]
+
+
+def p_idassign(p):
+    """
+    oneidassign : ID 
+                | ID '=' wireexpr
+    """
+    if len(p) == 2:
+        # assigned?, wireid
+        p[0] = (p[1], None)
+    else:
+        p[0] = (p[1], p[3])
+
 
 def p_wiretype(p):
     """
@@ -339,10 +430,11 @@ def p_wireval_0(p):
     wireval : ALLHIGH
             | ALLLOW
             | LITWIRE
+            | arithexpr
             | '{' wireconcat '}'
             | '(' wireexpr ')'
             | ID '[' arithexpr ':' arithexpr ']'
-            | ID '[' arithexpr ']'
+            | ID '[' wireexpr ']'
             | unaop wireval
     """
     if len(p) == 2:
@@ -384,9 +476,9 @@ def p_wireconcat(p):
                | wireexpr ',' wireconcat
     """
     if len(p) == 2:
-        p[0] = WireExpr(2, [p[1]])
+        p[0] = WireExpr(WireExprType.WIRECONCAT, [p[1]])
     else:
-        assert p[3].ttype == 2
+        assert p[3].ttype == WireExprType.WIRECONCAT
         p[0] = p[1].mergeConcat(p[3])
 
 
@@ -400,12 +492,34 @@ def p_wireop(p):
            | '^'
            | '<'
            | '>'
+           | LSHIFT
+           | RSHIFT
            | EQ
            | GEQ
            | LEQ
     """
     p[0] = p[1]
     return 
+
+
+def p_moduleinst(p):
+    """
+    moduleinst : ID ID '(' modportassign ')'
+    """
+
+
+def p_modportassign(p):
+    """
+    modportassign : oneportassign
+                  | oneportassign ',' modportassign
+                  | empty
+    """
+
+def p_oneportassign(p):
+    """
+    oneportassign : wireexpr
+                  | '.' ID '(' wireexpr ')'
+    """
 
 
 def p_empty(p):

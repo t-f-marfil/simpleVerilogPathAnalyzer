@@ -4,19 +4,26 @@ from svyacc import parser
 with open("fabs.sv") as f:
     data = f.read()
 
-# a = parser.parse(data, lexer=lexer, debug=True)
+
+# a = parser.parse(data, lexer=lexer, tracking=True, debug=True)
 a = parser.parse(data, lexer=lexer, tracking=True)
 # print(a)
 
-fabs = a.find("fabs")
-# print(fabs)
-dep = fabs.getNetDependency()
-
+# for mod in a.modules.values():
+#     print(mod.getNetDependency())
 
 # print(dep.directDependency)
 # print(dep.trueReg)
 # print(dep.findUpperRegister("dummy3"))
+
+dep = list(a.modules.values())[1].getNetDependency()
 # dep.findUpperRegisterAll()
+
+# for i in dep.flattened:
+#     print(i)
+
+# print(dep.upperRegData)
+
 while True:
     s = input("wire?: ")
     if s == "quit":

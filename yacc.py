@@ -16,10 +16,10 @@ print(a)
 # print(dep.trueReg)
 # print(dep.findUpperRegister("dummy3"))
 
-dep = list(a.modules.values())[0].getNetDependency()
+dep = a.getNetDependency()
 # dep.findUpperRegisterAll()
 
-for i in dep.flattened:
+for i in dep[0].flattenedAssigns:
     print(i)
 # print(a)
 # print(dep.upperRegData)

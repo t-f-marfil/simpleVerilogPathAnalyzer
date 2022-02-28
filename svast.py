@@ -9,29 +9,6 @@ class ModuleDuplicateErr(Exception):
     pass 
 
 
-class Source:
-    def __init__(self):
-        self.modules = {}
-
-    def __str__(self):
-        txt = f"{len(self.modules)} toplevel{'' if len(self.modules) <= 1 else 's'}:"
-        
-        for i in reversed(self.modules.values()):
-            txt += "\n\n" + indent(str(i))
-        return txt
-
-    def addModule(self, module):
-        if module.name in self.modules:
-            raise ModuleDuplicateErr(f"module with name '{module.name}' is declared twice.")
-        
-        self.modules[module.name] = module
-
-        return self
-
-    def find(self, key):
-        return self.modules.get(key, None)
-
-
 class OneParam:
     def __init__(self, name:str, val) -> None:
         self.name = name
@@ -664,3 +641,32 @@ class Module:
         obj.addPortInfo(self.port)
         return obj
         
+
+class Source:
+    def __init__(self):
+        self.modules = {}
+
+    def __str__(self):
+        txt = f"{len(self.modules)} toplevel{'' if len(self.modules) <= 1 else 's'}:"
+        
+        for i in reversed(self.modules.values()):
+            txt += "\n\n" + indent(str(i))
+        return txt
+
+    def addModule(self, module:Module):
+        if module.name in self.modules:
+            raise ModuleDuplicateErr(f"module with name '{module.name}' is declared twice.")
+        
+        self.modules[module.name] = module
+
+        return self
+
+    def findModule(self, key:str):
+        return self.modules.get(key, None)
+
+    def getNetDependency(self):
+        deps = [i.getNetDependency() for i in self.modules.values()]
+        return dict(zip(self.modules.keys(), deps))
+
+    def moduleNames(self):
+        return set(self.modules.keys())

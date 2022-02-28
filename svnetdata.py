@@ -92,6 +92,7 @@ class ModuleContentDependency:
 
         self.port = None
 
+        # self.flattenedAssigns, self.directDependency is generated here
         self.decodeDependency()
         self.upperRegData = {}
         
@@ -116,7 +117,7 @@ class ModuleContentDependency:
             trueReg = set()
 
             deplist = self.extractAssign()
-            self.flattened = deplist
+            self.flattenedAssigns = deplist
 
             for item in deplist:
                 lhs, rhs, assigntype = item.lhsId, item.rhsId, item.ttype
@@ -191,3 +192,5 @@ class ModuleContentDependency:
         except RecursionError as e:
             raise Exception(str(e) + "\ninfinite loop in wires.")
 
+    def findDirectDependency(self, wire:str):
+        return self.directDependency.get(wire, None)

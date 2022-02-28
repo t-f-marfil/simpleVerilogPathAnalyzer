@@ -2,3 +2,7 @@ __pycache__/
 out*\.txt
 *\.ipynb
 *\.sv
+!sample.sv
+
+parser.out 
+parsetab.py

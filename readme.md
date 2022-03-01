@@ -85,4 +85,6 @@ faddmc > flatten
 + flatten
   + list direct dependencies of all wire/registers.
 + stats
-  + show data of the module currently looking at.
+  + show data of the module you are currently looking at.
++ quit
+  + quit.

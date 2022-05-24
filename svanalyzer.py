@@ -1,10 +1,10 @@
 import sys
 import re
 
-from svlex import lexer
-from svyacc import parser
-from svast import Source
-from svutils import indent
+from .svlex import lexer
+from .svyacc import parser
+from .svast import Source
+from .svutils import indent
 
 class NoCurrentModule(Exception):
     pass

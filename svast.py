@@ -1,8 +1,8 @@
 from enum import Enum, auto
 import re
 
-from svutils import *
-from svnetdata import *
+from .svutils import *
+from .svnetdata import *
 
 
 class ModuleDuplicateErr(Exception):

@@ -14,10 +14,14 @@ _tokens = [
    "LSHIFT",
    "RSHIFT",
    "EQ",
-   "LEQ"
+   "LEQ",
+   "CONDAND",
+   "WILDCONN"
 ]
 
 # Regular expression rules for simple tokens
+t_CONDAND = "&&"
+t_WILDCONN = "\.\*"
 
 literals = r"+-(){}[]*/;:,=?<>@~#&|^."
 
@@ -49,7 +53,7 @@ def t_newline(t):
 t_ignore  = ' \t'
 
 def t_COMMENT(t):
-    r"(//.*)|(/\*(.|\n)*?\*/)"
+    r"(//.*)|(/\*(.|\n)*?\*/)|\(\*.*\*\)"
 
 reserved = {
     "module": "MODULE",

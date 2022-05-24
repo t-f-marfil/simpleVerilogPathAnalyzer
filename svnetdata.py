@@ -1,4 +1,4 @@
-from svutils import *
+from .svutils import *
 
 class AssignDependency:
     def __init__(self, ttype:AssignType, lhsId:list, rhsId:list, dependent=None) -> None:

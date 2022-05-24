@@ -3,8 +3,8 @@ from numpy import isin
 import ply.yacc as yacc
 
 # Get the token map from the lexer.  This is required.
-from svlex import tokens, lexer
-from svast import *
+from .svlex import tokens, lexer
+from .svast import *
 
 
 def p_source(p):
@@ -193,6 +193,7 @@ def p_modulecontent(p):
                   | assign ';' modulecontent
                   | always modulecontent
                   | moduleinst ';' modulecontent
+                  | lparamdec ';' modulecontent
                   | empty
     """
     if isinstance(p[1], list):
@@ -498,6 +499,7 @@ def p_wireop(p):
            | EQ
            | GEQ
            | LEQ
+           | CONDAND
     """
     p[0] = p[1]
     return 
@@ -513,6 +515,7 @@ def p_modportassign(p):
     """
     modportassign : oneportassign
                   | oneportassign ',' modportassign
+                  | WILDCONN
                   | empty
     """
 
@@ -520,6 +523,23 @@ def p_oneportassign(p):
     """
     oneportassign : wireexpr
                   | '.' ID '(' wireexpr ')'
+    """
+
+def p_lparamdec(p):
+    """
+    lparamdec : LOCALPARAM lparams
+
+    """
+
+def p_lparams(p):
+    """
+    lparams : onelparam
+            | onelparam ',' lparams
+    """
+
+def p_onelparam(p):
+    """
+    onelparam : ID '=' wireexpr
     """
 
 

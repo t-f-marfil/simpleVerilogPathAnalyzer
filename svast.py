@@ -178,9 +178,9 @@ class WireExpr:
         elif self.ttype == WireExprType.WIRECONCAT:
             txt = f"{{{', '.join([str(i) for i in self.data])}}}"
         elif self.ttype == WireExprType.BINOP:
-            txt = f"({str(self.data[0])}) {str(self.data[1])} {str(self.data[2])}"
+            txt = f"({str(self.data[0])} {str(self.data[1])} {str(self.data[2])})"
         elif self.ttype == WireExprType.TEROP:
-            txt = f"({str(self.data[0])})? {str(self.data[1])}: {str(self.data[2])}"
+            txt = f"(({str(self.data[0])})? {str(self.data[1])}: {str(self.data[2])})"
         elif self.ttype == WireExprType.IDSLICE:
             txt = f"{str(self.data[0])}[{str(self.data[1])}:{str(self.data[2])}]"
         elif self.ttype == WireExprType.LITERAL:
@@ -244,7 +244,7 @@ class ArithExpr:
         if self.ttype == ArithExprType.LITERAL:
             txt = str(self.data)
         elif self.ttype == ArithExprType.BINOP:
-            txt = f"{str(self.data[0])} {str(self.data[1])} {str(self.data[2])}"
+            txt = f"({str(self.data[0])} {str(self.data[1])} {str(self.data[2])})"
         else:
             assert False
 

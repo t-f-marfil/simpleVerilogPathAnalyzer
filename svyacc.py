@@ -83,12 +83,47 @@ def p_oneparam(p):
 
 def p_arithexpr(p):
     """
-    arithexpr : NUMBER
-              | ID
+    arithexpr : wireexpr
     """
-    p[0] = ArithExpr(ArithExprType.LITERAL, p[1])
+    p[0] = p[1]
     return 
 
+# def p_arithexpr(p):
+#     """
+#     arithexpr : NUMBER
+#               | ID
+#     """
+#     p[0] = ArithExpr(ArithExprType.LITERAL, p[1])
+#     return 
+
+# def p_arithexpr(p):
+#     """
+#     arithexpr : onearith
+#               | onearith arithop arithexpr
+#     """
+#     p[0] = p[1]
+#     # ommiting info
+#     return 
+
+
+# def p_onearith(p):
+#     """
+#     onearith : NUMBER
+#              | ID
+#     """
+#     p[0] = ArithExpr(ArithExprType.LITERAL, p[1])
+#     return
+
+
+# def p_arithop(p):
+#     """
+#     arithop : '+'
+#             | '*'
+#             | '-'
+#             | '/'
+#     """
+#     p[0] = p[1]
+#     return
 
 def p_portdec(p):
     """
@@ -359,8 +394,14 @@ def p_oneassign(p):
 def p_ifblock(p):
     """
     ifblock : IF '(' wireexpr ')' BEGIN alwayscont END
+            | IF '(' wireexpr ')' oneassign ';'
     """
-    p[0] = AlwaysIfblock(p[3], p[6])
+    if len(p) == 8:
+        p[0] = AlwaysIfblock(p[3], p[6])
+    else:
+        assert len(p) == 7
+        one = AlwaysContent().addAssign(p[5])
+        p[0] = AlwaysIfblock(p[3], one)
 
 
 def p_elseblock(p):
@@ -386,12 +427,15 @@ def p_lhs(p):
     """
     lhs : ID
         | ID '[' arithexpr ':' arithexpr ']'
+        | ID '[' arithexpr ']'
         | '{' lhsconcat '}'
     """
     if len(p) == 2:
         p[0] = Lhs(LhsType.ID, p[1])
     elif len(p) == 7:
         p[0] = Lhs(LhsType.IDSLICE, [p[1], p[3], p[5]])
+    elif len(p) == 5:
+        p[0] = Lhs(LhsType.IDSLICE, [p[1], p[3], p[3]])
     else:
         p[0] = p[2]
     
@@ -426,7 +470,6 @@ def p_wireexpr(p):
 
     return 
 
-
 def p_wireval_0(p):
     """
     wireval : ALLHIGH
@@ -435,7 +478,7 @@ def p_wireval_0(p):
             | NUMBER
             | '{' wireconcat '}'
             | '(' wireexpr ')'
-            | ID '[' arithexpr ':' arithexpr ']'
+            | ID '[' wireexpr ':' wireexpr ']'
             | ID '[' wireexpr ']'
             | unaop wireval
     """
@@ -452,6 +495,32 @@ def p_wireval_0(p):
         p[0] = WireExpr(WireExprType.UNAOP, [p[1], p[2]])
 
     return 
+
+# def p_wireval_0(p):
+#     """
+#     wireval : ALLHIGH
+#             | ALLLOW
+#             | LITWIRE
+#             | NUMBER
+#             | '{' wireconcat '}'
+#             | '(' wireexpr ')'
+#             | ID '[' arithexpr ':' arithexpr ']'
+#             | ID '[' wireexpr ']'
+#             | unaop wireval
+#     """
+#     if len(p) == 2:
+#         p[0] = WireExpr(WireExprType.LITERAL, p[1])
+#     elif len(p) == 4:
+#         p[0] = p[2]
+#     elif len(p) == 7:
+#         p[0] = WireExpr(WireExprType.IDSLICE, [p[1], p[3], p[5]])
+#     elif len(p) == 5:
+#         p[0] = WireExpr(WireExprType.IDSLICE, [p[1], p[3], p[3]])
+#     else:
+#         assert len(p) == 3
+#         p[0] = WireExpr(WireExprType.UNAOP, [p[1], p[2]])
+
+#     return 
 
 
 def p_unaop(p):

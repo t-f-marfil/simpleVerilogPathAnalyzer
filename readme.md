@@ -27,7 +27,11 @@ module faddmc (
 
 ### Demo
 ```
-> py svanalyzer.py sample.sv
+> py 
+
+> from simpleVerilogPathAnalyzer import main 
+
+> main("simpleVerilogPathAnalyzer/sample.sv")
 
 loading the source file...
 no dependency found on "msbcount1".

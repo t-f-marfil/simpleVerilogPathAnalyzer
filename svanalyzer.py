@@ -45,8 +45,9 @@ class SourceAnalyzer:
         return upperRegs, directParent
 
 
-if __name__ == "__main__":
-    with open(sys.argv[1]) as f:
+# if __name__ == "__main__":
+def main(arg):
+    with open(arg) as f:
         data = f.read()
 
     print()

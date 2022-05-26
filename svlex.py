@@ -21,7 +21,7 @@ _tokens = [
 ]
 
 # Regular expression rules for simple tokens
-t_INCR = "++"
+t_INCR = r"\+\+"
 
 t_CONDAND = "&&"
 t_WILDCONN = "\.\*"

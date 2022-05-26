@@ -401,7 +401,7 @@ def p_forblock(p):
 
 def p_forcond(p):
     """
-    forcond : '(' ID ID '=' NUMBER ';' ID compop NUMBER ';' ID '++' ')'
+    forcond : '(' ID ID '=' NUMBER ';' ID compop NUMBER ';' ID INCR ')'
     """
 
 def p_compop(p):

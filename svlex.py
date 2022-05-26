@@ -16,10 +16,13 @@ _tokens = [
    "EQ",
    "LEQ",
    "CONDAND",
-   "WILDCONN"
+   "WILDCONN",
+   "INCR",
 ]
 
 # Regular expression rules for simple tokens
+t_INCR = "++"
+
 t_CONDAND = "&&"
 t_WILDCONN = "\.\*"
 
@@ -74,7 +77,8 @@ reserved = {
     "reg": "REG",
     "logic": "LOGIC",
     "if": "IF",
-    "else": "ELSE"
+    "else": "ELSE",
+    "for" : "FOR"
 }
 
 tokens = _tokens + list(reserved.values())

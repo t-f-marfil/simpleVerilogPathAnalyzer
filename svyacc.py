@@ -363,14 +363,18 @@ def p_alwayscont(p):
     """
     alwayscont : oneassign ';' alwayscont
                | ifblock alwayscont
+               | forblock alwayscont
                | ifblock elseblock alwayscont
                | empty
     """
     if len(p) > 2 and p[2] == ';':
         p[0] = p[3].addAssign(p[1])
     elif len(p) == 3:
-        inst = AlwaysIfelseblock(p[1])
-        p[0] = p[2].addIfelseblock(inst)
+        if p[1] is None:
+            p[0] = p[1]
+        else:
+            inst = AlwaysIfelseblock(p[1])
+            p[0] = p[2].addIfelseblock(inst)
     elif len(p) == 4:
         inst = AlwaysIfelseblock(p[1], p[2])
         p[0] = p[3].addIfelseblock(inst)
@@ -390,6 +394,23 @@ def p_oneassign(p):
         assert p[2] == "<="
         p[0] = AlwaysAssign(AssignType.NONBLOCK, p[1], p[3])
 
+def p_forblock(p):
+    """
+    forblock : FOR forcond BEGIN alwayscont END
+    """
+
+def p_forcond(p):
+    """
+    forcond : '(' ID ID '=' NUMBER ';' ID compop NUMBER ';' ID '++' ')'
+    """
+
+def p_compop(p):
+    """
+    compop : '<'
+           | '>'
+           | GEQ
+           | LEQ
+    """
 
 def p_ifblock(p):
     """

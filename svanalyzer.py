@@ -1,10 +1,10 @@
 import sys
 import re
 
-from .svlex import lexer
-from .svyacc import parser
-from .svast import Source
-from .svutils import indent
+from simpleVerilogPathAnalyzer.svlex import lexer
+from simpleVerilogPathAnalyzer.svyacc import parser
+from simpleVerilogPathAnalyzer.svast import Source
+from simpleVerilogPathAnalyzer.svutils import indent
 
 class NoCurrentModule(Exception):
     pass
@@ -45,9 +45,8 @@ class SourceAnalyzer:
         return upperRegs, directParent
 
 
-# if __name__ == "__main__":
-def main(arg):
-    with open(arg) as f:
+if __name__ == "__main__":
+    with open(sys.argv[1]) as f:
         data = f.read()
 
     print()

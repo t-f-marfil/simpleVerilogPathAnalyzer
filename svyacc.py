@@ -7,6 +7,19 @@ from .svlex import tokens, lexer
 from .svast import *
 
 
+precedence = (
+    ("left", "+", "-"),
+    ("left", "*"),
+    ("left", "LSHIFT", "RSHIFT"),
+    ("left", "GEQ", "NONBLOCK", "<", ">"),
+    ("left", "EQ", "NEQ"),
+    ("left", "&"),
+    ("left", "^"),
+    ("left", "|"),
+    ("left", "CONDAND"),
+    ("left", "?", ":")
+)
+
 def p_source(p):
     """
     source : moduledec source 
@@ -191,7 +204,7 @@ def p_portterminal(p):
 
 def p_wireslice(p):
     """
-    wireslice : '[' arithexpr ':' arithexpr ']'
+    wireslice : '[' arithexpr wiresliceop arithexpr ']'
               | empty
     """
     if len(p) == 6:
@@ -229,6 +242,8 @@ def p_modulecontent(p):
                   | always modulecontent
                   | moduleinst ';' modulecontent
                   | lparamdec ';' modulecontent
+                  | genvardec ';' modulecontent
+                  | genfor modulecontent
                   | empty
     """
     if isinstance(p[1], list):
@@ -245,14 +260,25 @@ def p_modulecontent(p):
     elif p[1] is None and len(p) == 4:
         p[0] = p[3]
     else:
-        assert len(p) == 2
+        assert len(p) == 2 or len(p) == 3
         p[0] = ModuleContent()
 
 
+def p_genvardec(p):
+    """
+    genvardec : GENVAR genids 
+    """
+
+def p_genids(p):
+    """
+    genids : ID 
+           | ID ',' genids
+    """
+
 def p_wiredec(p):
     """
-    wiredec : wiretype '[' arithexpr ':' arithexpr ']' idassigns
-            | wiretype '[' arithexpr ':' arithexpr ']' ID '[' arithexpr ':' arithexpr ']'
+    wiredec : wiretype '[' arithexpr wiresliceop arithexpr ']' idassigns
+            | wiretype '[' arithexpr wiresliceop arithexpr ']' ID '[' arithexpr wiresliceop arithexpr ']'
             | wiretype idassigns
     """
     if len(p) == 8:
@@ -394,14 +420,37 @@ def p_oneassign(p):
         assert p[2] == "<="
         p[0] = AlwaysAssign(AssignType.NONBLOCK, p[1], p[3])
 
+
+def p_genfor(p):
+    """
+    genfor : FOR forcond BEGIN modulecontent END 
+           | FOR forcond BEGIN ':' ID modulecontent END
+    """
+
 def p_forblock(p):
     """
     forblock : FOR forcond BEGIN alwayscont END
+             | FOR forcond BEGIN ':' ID alwayscont END
     """
 
 def p_forcond(p):
     """
-    forcond : '(' ID ID '=' NUMBER ';' ID compop NUMBER ';' ID INCR ')'
+    forcond : '(' dtype ID '=' NUMBER ';' ID compop wireexpr ';' forupdate ')'
+            | '(' ID '=' NUMBER ';' ID compop wireval ';' forupdate ')'
+    """
+
+def p_forupdate(p):
+    """
+    forupdate : ID INCR
+              | ID DECR
+              | ID MINUSEQ ID
+              | ID PLUSEQ ID
+    """
+
+def p_dtype(p):
+    """
+    dtype : INT
+          | INTEGER
     """
 
 def p_compop(p):
@@ -409,7 +458,7 @@ def p_compop(p):
     compop : '<'
            | '>'
            | GEQ
-           | LEQ
+           | NONBLOCK
     """
 
 def p_ifblock(p):
@@ -447,7 +496,7 @@ def p_elseblock(p):
 def p_lhs(p):
     """
     lhs : ID
-        | ID '[' arithexpr ':' arithexpr ']'
+        | ID '[' arithexpr wiresliceop arithexpr ']'
         | ID '[' arithexpr ']'
         | '{' lhsconcat '}'
     """
@@ -479,7 +528,21 @@ def p_lhsconat(p):
 def p_wireexpr(p):
     """
     wireexpr : wireval
-             | wireval wireop wireexpr
+             | wireexpr '+' wireexpr
+             | wireexpr '-' wireexpr
+             | wireexpr '*' wireexpr
+             | wireexpr '&' wireexpr
+             | wireexpr '|' wireexpr
+             | wireexpr GEQ wireexpr
+             | wireexpr NONBLOCK wireexpr
+             | wireexpr LSHIFT wireexpr
+             | wireexpr RSHIFT wireexpr
+             | wireexpr EQ wireexpr
+             | wireexpr NEQ wireexpr
+             | wireexpr CONDAND wireexpr
+             | wireexpr '<' wireexpr
+             | wireexpr '>' wireexpr
+             | wireexpr '^' wireexpr
              | wireval '?' wireexpr ':' wireexpr
     """
     if len(p) == 2:
@@ -488,6 +551,8 @@ def p_wireexpr(p):
         p[0] = WireExpr(WireExprType.BINOP, [p[1], p[2], p[3]])
     elif len(p) == 6:
         p[0] = WireExpr(WireExprType.TEROP, [p[1], p[3], p[5]])
+    # else:
+    #     p[0] = p[1]
 
     return 
 
@@ -499,9 +564,10 @@ def p_wireval_0(p):
             | NUMBER
             | '{' wireconcat '}'
             | '(' wireexpr ')'
-            | ID '[' wireexpr ':' wireexpr ']'
+            | ID '[' wireexpr wiresliceop wireexpr ']'
             | ID '[' wireexpr ']'
             | unaop wireval
+            | ID '[' wireexpr ']' '.' ID sliceornone
     """
     if len(p) == 2:
         p[0] = WireExpr(WireExprType.LITERAL, p[1])
@@ -511,11 +577,33 @@ def p_wireval_0(p):
         p[0] = WireExpr(WireExprType.IDSLICE, [p[1], p[3], p[5]])
     elif len(p) == 5:
         p[0] = WireExpr(WireExprType.IDSLICE, [p[1], p[3], p[3]])
+    elif len(p) == 8:
+        p[0] = p[7]
     else:
         assert len(p) == 3
         p[0] = WireExpr(WireExprType.UNAOP, [p[1], p[2]])
 
     return 
+
+def p_sliceornone(p):
+    """
+    sliceornone : empty
+                | '[' wireexpr wiresliceop wireexpr ']'
+                | '[' wireexpr ']'
+    """
+
+# def p_wirecore(p):
+#     """
+#     wirecore : ID
+#              | ID '[' wireexpr wiresliceop wireexpr ']'
+#              | ID '[' wireexpr ']'
+#     """
+
+def p_wiresliceop(p):
+    """
+    wiresliceop : ':'
+                | MINUSCOLON
+    """
 
 # def p_wireval_0(p):
 #     """
@@ -525,7 +613,7 @@ def p_wireval_0(p):
 #             | NUMBER
 #             | '{' wireconcat '}'
 #             | '(' wireexpr ')'
-#             | ID '[' arithexpr ':' arithexpr ']'
+#             | ID '[' arithexpr wiresliceop arithexpr ']'
 #             | ID '[' wireexpr ']'
 #             | unaop wireval
 #     """
@@ -574,32 +662,46 @@ def p_wireconcat(p):
         p[0] = p[1].mergeConcat(p[3])
 
 
-def p_wireop(p):
-    """
-    wireop : '+'
-           | '-'
-           | '*'
-           | '&'
-           | '|'
-           | '^'
-           | '<'
-           | '>'
-           | LSHIFT
-           | RSHIFT
-           | EQ
-           | GEQ
-           | LEQ
-           | CONDAND
-    """
-    p[0] = p[1]
-    return 
+# def p_wireop(p):
+#     """
+#     wireop : '+'
+#            | '-'
+#            | '*'
+#            | '&'
+#            | '|'
+#            | '^'
+#            | '<'
+#            | '>'
+#            | LSHIFT
+#            | RSHIFT
+#            | EQ
+#            | GEQ
+#            | NONBLOCK
+#            | CONDAND
+#            | NEQ
+#     """
+#     p[0] = p[1]
+#     return 
 
 
 def p_moduleinst(p):
     """
-    moduleinst : ID ID '(' modportassign ')'
+    moduleinst : ID '#' '(' paramassign ')' ID '(' modportassign ')'
+               | ID ID '(' modportassign ')'
     """
 
+def p_paramassign(p):
+    """
+    paramassign : oneparamassign 
+                | oneparamassign ',' paramassign
+                | WILDCONN
+                | empty
+    """
+
+def p_oneparamassign(p):
+    """
+    oneparamassign : oneportassign
+    """
 
 def p_modportassign(p):
     """

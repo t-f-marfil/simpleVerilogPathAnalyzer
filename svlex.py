@@ -2,6 +2,7 @@ import ply.lex as lex
 from ply.lex import TOKEN
 
 
+
 # List of token names.   This is always required
 _tokens = [
    'NUMBER',
@@ -14,19 +15,30 @@ _tokens = [
    "LSHIFT",
    "RSHIFT",
    "EQ",
-   "LEQ",
+#    "LEQ",
    "CONDAND",
    "WILDCONN",
+
    "INCR",
+   "DECR",
+   "PLUSEQ",
+   "MINUSEQ",
+   "NEQ",
+
+   "MINUSCOLON",
 ]
 
 # Regular expression rules for simple tokens
+t_MINUSCOLON = "-:"
+
 t_INCR = r"\+\+"
+t_DECR = "--"
+t_PLUSEQ = r"\+="
+t_MINUSEQ = "-="
+t_NEQ = "!="
 
 t_CONDAND = "&&"
 t_WILDCONN = "\.\*"
-
-literals = r"+-(){}[]*/;:,=?<>@~#&|^."
 
 t_NONBLOCK = "<="
 t_GEQ = ">="
@@ -35,8 +47,9 @@ t_ALLLOW = "'0"
 t_LSHIFT = "<<"
 t_RSHIFT = ">>"
 t_EQ = "=="
-t_LEQ = "<="
+# t_LEQ = "<="
 
+literals = r"+-(){}[]*/;:,=?<>@~#&|^."
 
 def t_LITWIRE(t):
     r"[0-9]+'(b|h|d)[0-9]+"
@@ -76,9 +89,13 @@ reserved = {
     "wire": "WIRE",
     "reg": "REG",
     "logic": "LOGIC",
+    "genvar" : "GENVAR",
     "if": "IF",
     "else": "ELSE",
-    "for" : "FOR"
+    "for" : "FOR",
+
+    "int" : "INT",
+    "integer" : "INTEGER"
 }
 
 tokens = _tokens + list(reserved.values())

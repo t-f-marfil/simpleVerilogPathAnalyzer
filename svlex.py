@@ -26,10 +26,12 @@ _tokens = [
    "NEQ",
 
    "MINUSCOLON",
+   "PLUSCOLON"
 ]
 
 # Regular expression rules for simple tokens
 t_MINUSCOLON = "-:"
+t_PLUSCOLON = r"\+:"
 
 t_INCR = r"\+\+"
 t_DECR = "--"

@@ -603,6 +603,7 @@ def p_wiresliceop(p):
     """
     wiresliceop : ':'
                 | MINUSCOLON
+                | PLUSCOLON
     """
 
 # def p_wireval_0(p):

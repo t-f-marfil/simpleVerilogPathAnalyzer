@@ -1,0 +1,4 @@
+[submodule "simpleVerilogPathAnalyzer"]
+	path = simpleVerilogPathAnalyzer
+	url = https://github.com/t-f-marfil/simpleVerilogPathAnalyzer.git
+	branch = asmodule

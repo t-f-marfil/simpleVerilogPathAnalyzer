@@ -423,8 +423,14 @@ def p_oneassign(p):
 
 def p_genfor(p):
     """
-    genfor : FOR forcond BEGIN modulecontent END 
-           | FOR forcond BEGIN ':' ID modulecontent END
+    genfor : FOR forcond BEGIN genforcontent END 
+           | FOR forcond BEGIN ':' ID genforcontent END
+    """
+
+def p_genforcontent(p):
+    """
+    genforcontent : modulecontent
+                  | alwayscont
     """
 
 def p_forblock(p):

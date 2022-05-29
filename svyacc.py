@@ -244,6 +244,7 @@ def p_modulecontent(p):
                   | lparamdec ';' modulecontent
                   | genvardec ';' modulecontent
                   | genfor modulecontent
+                  | genifelse modulecontent
                   | empty
     """
     if isinstance(p[1], list):
@@ -430,7 +431,23 @@ def p_genfor(p):
 def p_genforcontent(p):
     """
     genforcontent : modulecontent
-                  | alwayscont
+    """
+
+def p_genifelse(p):
+    """
+    genifelse : genif
+              | genif genelse
+    """
+
+def p_genif(p):
+    """
+    genif : IF '(' wireexpr ')' BEGIN modulecontent END
+    """
+
+def p_genelse(p):
+    """
+    genelse : ELSE genif
+            | ELSE BEGIN modulecontent END
     """
 
 def p_forblock(p):
@@ -442,7 +459,7 @@ def p_forblock(p):
 def p_forcond(p):
     """
     forcond : '(' dtype ID '=' NUMBER ';' ID compop wireexpr ';' forupdate ')'
-            | '(' ID '=' NUMBER ';' ID compop wireval ';' forupdate ')'
+            | '(' ID '=' NUMBER ';' ID compop wireexpr ';' forupdate ')'
     """
 
 def p_forupdate(p):
@@ -503,10 +520,12 @@ def p_lhs(p):
     """
     lhs : ID
         | ID '[' arithexpr wiresliceop arithexpr ']'
-        | ID '[' arithexpr ']'
+        | ID '[' wireexpr ']'
         | '{' lhsconcat '}'
+        | genextract
     """
     if len(p) == 2:
+        # genextract??
         p[0] = Lhs(LhsType.ID, p[1])
     elif len(p) == 7:
         p[0] = Lhs(LhsType.IDSLICE, [p[1], p[3], p[5]])
@@ -573,9 +592,10 @@ def p_wireval_0(p):
             | ID '[' wireexpr wiresliceop wireexpr ']'
             | ID '[' wireexpr ']'
             | unaop wireval
-            | ID '[' wireexpr ']' '.' ID sliceornone
+            | genextract
     """
     if len(p) == 2:
+        # genextract???
         p[0] = WireExpr(WireExprType.LITERAL, p[1])
     elif len(p) == 4:
         p[0] = p[2]
@@ -590,6 +610,12 @@ def p_wireval_0(p):
         p[0] = WireExpr(WireExprType.UNAOP, [p[1], p[2]])
 
     return 
+
+def p_genextract(p):
+    """
+    genextract : ID '[' wireexpr ']' '.' ID sliceornone
+               | ID '[' wireexpr ']' '.' genextract
+    """
 
 def p_sliceornone(p):
     """
@@ -749,6 +775,12 @@ def p_empty(p):
 
 # Error rule for syntax errors
 def p_error(p):
+    stack_state_str = ' '.join([symbol.type for symbol in parser.symstack][1:])
+
+    print('Syntax error in input! Parser State:{} {} . {}'
+          .format(parser.state,
+                  stack_state_str,
+                  p))
     print("Syntax error in input!")
     # print("now parsing ", p.value)
     raise Exception(f"""failed in parsing.

@@ -9,7 +9,7 @@ from .svast import *
 
 precedence = (
     ("left", "+", "-"),
-    ("left", "*"),
+    ("left", "*", "/", "%"),
     ("left", "LSHIFT", "RSHIFT"),
     ("left", "GEQ", "NONBLOCK", "<", ">"),
     ("left", "EQ", "NEQ"),
@@ -558,6 +558,8 @@ def p_wireexpr(p):
              | wireexpr '*' wireexpr
              | wireexpr '&' wireexpr
              | wireexpr '|' wireexpr
+             | wireexpr '/' wireexpr
+             | wireexpr '%' wireexpr
              | wireexpr GEQ wireexpr
              | wireexpr NONBLOCK wireexpr
              | wireexpr LSHIFT wireexpr
@@ -588,6 +590,7 @@ def p_wireval_0(p):
             | LITWIRE
             | NUMBER
             | '{' wireconcat '}'
+            | '{' wireexpr '{' wireval '}' '}'
             | '(' wireexpr ')'
             | ID '[' wireexpr wiresliceop wireexpr ']'
             | ID '[' wireexpr ']'
@@ -600,7 +603,11 @@ def p_wireval_0(p):
     elif len(p) == 4:
         p[0] = p[2]
     elif len(p) == 7:
-        p[0] = WireExpr(WireExprType.IDSLICE, [p[1], p[3], p[5]])
+        if p[1] == "{":
+            # tekito
+            p[0] = p[2]
+        else:
+            p[0] = WireExpr(WireExprType.IDSLICE, [p[1], p[3], p[5]])
     elif len(p) == 5:
         p[0] = WireExpr(WireExprType.IDSLICE, [p[1], p[3], p[3]])
     elif len(p) == 8:
